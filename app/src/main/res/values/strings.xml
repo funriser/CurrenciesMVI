@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CurrencyConverter</string>
+    <string name="description_currency_img">Currency image</string>
+</resources>

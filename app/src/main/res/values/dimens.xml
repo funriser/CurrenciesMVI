@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="marginXl">20dp</dimen>
+    <dimen name="marginL">15dp</dimen>
+    <dimen name="marginM">10dp</dimen>
+    <dimen name="marginS">5dp</dimen>
+    <dimen name="marginLayout">@dimen/marginL</dimen>
+
+    <dimen name="img_size">60dp</dimen>
+
+</resources>
