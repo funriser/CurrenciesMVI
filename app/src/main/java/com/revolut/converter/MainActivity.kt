@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.revolut.converter.core.observe
 import com.revolut.converter.core.viewModel
 import com.revolut.converter.di.ViewModelFactory
-import com.revolut.converter.domain.entity.CurrencyRate
+import com.revolut.converter.domain.entity.Currency
 import com.revolut.converter.ui.ConverterViewModel
 import com.revolut.converter.ui.CurrencyAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,16 +36,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        currencyAdapter = CurrencyAdapter()
+        currencyAdapter = CurrencyAdapter(viewModel)
         rvCurrencyRates.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            itemAnimator = DefaultItemAnimator()
+            itemAnimator = DefaultItemAnimator().apply {
+                supportsChangeAnimations = false
+            }
             adapter = currencyAdapter
         }
     }
 
-    private fun renderCurrencyRates(rates: List<CurrencyRate>?) {
-        currencyAdapter.items = rates.orEmpty()
+    private fun renderCurrencyRates(rates: List<Currency>?) {
+        currencyAdapter.setItems(rates.orEmpty())
     }
 
 }

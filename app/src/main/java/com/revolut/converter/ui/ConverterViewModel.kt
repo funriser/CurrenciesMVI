@@ -4,33 +4,46 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.revolut.converter.core.plusAssign
-import com.revolut.converter.domain.entity.CurrencyRate
-import com.revolut.converter.domain.interactor.GetCurrencyRates
+import com.revolut.converter.domain.entity.BaseCurrency
+import com.revolut.converter.domain.entity.Currency
+import com.revolut.converter.domain.interactor.GetCurrencies
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ConverterViewModel @Inject constructor(
-    private val getCurrencyRates: GetCurrencyRates
+    private val getCurrencies: GetCurrencies
 ): ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val _rates = MutableLiveData<List<CurrencyRate>>()
-    val rates: LiveData<List<CurrencyRate>> = _rates
+    private val _rates = MutableLiveData<List<Currency>>()
+    val rates: LiveData<List<Currency>> = _rates
 
     init {
-        val defaultParams = GetCurrencyRates.Params("EUR", 100.0)
-        compositeDisposable += getCurrencyRates.buildObservable(defaultParams)
+        val defaultParams = GetCurrencies.Params("EUR", 100.0)
+        getCurrencies(defaultParams)
+    }
+
+    fun onNewExchangeAmount(baseCurrency: BaseCurrency, amount: String) {
+        val exchangeAmount = amount.toDouble()
+        val params = GetCurrencies.Params(baseCurrency.name, exchangeAmount)
+        getCurrencies(params)
+    }
+
+    private fun getCurrencies(params: GetCurrencies.Params) {
+        compositeDisposable.clear()
+        compositeDisposable += getCurrencies.buildObservable(params)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::onGetCurrencyRatesSuccess, ::onGetCurrencyRatesError)
     }
 
-    private fun onGetCurrencyRatesSuccess(rates: List<CurrencyRate>) {
+    private fun onGetCurrencyRatesSuccess(rates: List<Currency>) {
         _rates.value = rates
     }
 
     private fun onGetCurrencyRatesError(e: Throwable) {
+        //TODO("Add error handling")
         e.printStackTrace()
     }
 
