@@ -44,8 +44,13 @@ class CurrencyAdapter(
 
         fun bind(viewModel: ConverterViewModel, currency: Currency) {
             with(itemView) {
-                tvCurrencyTitle.text = currency.name
+                tvCurrencyTitle.text = currency.code
                 tvCurrencyCountry.text = currency.name
+                if (currency.image != -1) {
+                    ivCurrency.setImageResource(currency.image)
+                } else {
+                    //TODO("Clear resource if there is no image")
+                }
                 when(currency) {
                     is BaseCurrency -> {
                         bindBaseCurrency(viewModel, currency)

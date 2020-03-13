@@ -4,9 +4,10 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/marginLayout">
+    android:padding="@dimen/marginLayout"
+    android:gravity="center_vertical">
     
-    <ImageView 
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivCurrency"
         style="@style/Image.Currency"
         android:contentDescription="@string/description_currency_img"/>
@@ -16,6 +17,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight="1"
+        android:layout_marginStart="@dimen/marginL"
         android:gravity="start">
 
         <TextView

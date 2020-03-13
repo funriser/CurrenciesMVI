@@ -27,7 +27,7 @@ class ConverterViewModel @Inject constructor(
 
     fun onNewExchangeAmount(baseCurrency: BaseCurrency, amount: String) {
         val exchangeAmount = amount.toDouble()
-        val params = GetCurrencies.Params(baseCurrency.name, exchangeAmount)
+        val params = GetCurrencies.Params(baseCurrency.code, exchangeAmount)
         getCurrencies(params)
     }
 
