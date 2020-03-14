@@ -3,19 +3,19 @@ package com.revolut.converter.ui
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import com.revolut.converter.domain.entity.BaseCurrency
+import com.revolut.converter.domain.entity.BaseConvertedCurrency
 
 class BaseCurrencyTextWatcher(
     private val editText: EditText,
     private val viewModel: ConverterViewModel,
-    private val baseCurrency: BaseCurrency
+    private val baseExchangeCurrency: BaseConvertedCurrency
 ): TextWatcher {
 
     override fun afterTextChanged(s: Editable?) {
         if (!editText.isFocused) {
             return
         }
-        viewModel.onNewExchangeAmount(baseCurrency, s.toString())
+        viewModel.onNewExchangeAmount(baseExchangeCurrency, s.toString())
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

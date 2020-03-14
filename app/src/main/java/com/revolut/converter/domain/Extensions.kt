@@ -6,6 +6,7 @@ import java.math.RoundingMode
 const val SCALE = 2
 val ROUND_MODE = RoundingMode.HALF_UP
 val ZERO = BigDecimal("0.0").defScale()
+val HUNDRED = BigDecimal("100.0").defScale()
 
 operator fun BigDecimal.div(other: BigDecimal) = this.divide(other, SCALE, ROUND_MODE)
 

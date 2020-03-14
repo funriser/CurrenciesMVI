@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.revolut.converter.core.observe
 import com.revolut.converter.core.viewModel
 import com.revolut.converter.di.ViewModelFactory
-import com.revolut.converter.domain.entity.Currency
+import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.ConverterViewModel
 import com.revolut.converter.ui.CurrencyAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             .inject(this)
 
         viewModel = viewModel(viewModelFactory) {
-            observe(rates, ::renderCurrencyRates)
+            observe(rates, ::renderCurrencies)
         }
 
         initView()
@@ -51,14 +51,14 @@ class MainActivity : AppCompatActivity() {
                             viewModel.rates.removeObservers(this@MainActivity)
                         }
                     } else {
-                        observe(viewModel.rates, ::renderCurrencyRates)
+                        observe(viewModel.rates, ::renderCurrencies)
                     }
                 }
             })
         }
     }
 
-    private fun renderCurrencyRates(rates: List<Currency>?) {
+    private fun renderCurrencies(rates: List<ConvertedCurrency>?) {
         currencyAdapter.setItems(rates.orEmpty())
     }
 

@@ -4,45 +4,48 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.revolut.converter.core.plusAssign
-import com.revolut.converter.domain.entity.BaseCurrency
-import com.revolut.converter.domain.entity.Currency
-import com.revolut.converter.domain.interactor.GetCurrencies
+import com.revolut.converter.domain.HUNDRED
+import com.revolut.converter.domain.entity.BaseConvertedCurrency
+import com.revolut.converter.domain.entity.ConvertedCurrency
+import com.revolut.converter.domain.interactor.GetConvertedCurrencies
+import com.revolut.converter.domain.toDecimal
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ConverterViewModel @Inject constructor(
-    private val getCurrencies: GetCurrencies
+    private val getConvertedCurrencies: GetConvertedCurrencies
 ): ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val _rates = MutableLiveData<List<Currency>>()
-    val rates: LiveData<List<Currency>> = _rates
+    private val _rates = MutableLiveData<List<ConvertedCurrency>>()
+    val rates: LiveData<List<ConvertedCurrency>> = _rates
 
     init {
-        val defaultParams = GetCurrencies.Params("EUR", 100.0)
+        val defaultParams = GetConvertedCurrencies.Params("EUR", HUNDRED)
         getCurrencies(defaultParams)
     }
 
-    fun onNewExchangeAmount(baseCurrency: BaseCurrency, amount: String) {
-        val exchangeAmount = amount.toDouble()
-        val params = GetCurrencies.Params(baseCurrency.code, exchangeAmount)
+    fun onNewExchangeAmount(baseExchangeCurrency: BaseConvertedCurrency, amount: String) {
+        val code = baseExchangeCurrency.currency.code
+        val exchangeAmount = amount.toDecimal()
+        val params = GetConvertedCurrencies.Params(code, exchangeAmount)
         getCurrencies(params)
     }
 
-    private fun getCurrencies(params: GetCurrencies.Params) {
+    private fun getCurrencies(params: GetConvertedCurrencies.Params) {
         compositeDisposable.clear()
-        compositeDisposable += getCurrencies.buildObservable(params)
+        compositeDisposable += getConvertedCurrencies.buildObservable(params)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(::onGetCurrencyRatesSuccess, ::onGetCurrencyRatesError)
+            .subscribe(::onGetCurrenciesSuccess, ::onGetCurrenciesError)
     }
 
-    private fun onGetCurrencyRatesSuccess(rates: List<Currency>) {
+    private fun onGetCurrenciesSuccess(rates: List<ConvertedCurrency>) {
         _rates.value = rates
     }
 
-    private fun onGetCurrencyRatesError(e: Throwable) {
+    private fun onGetCurrenciesError(e: Throwable) {
         //TODO("Add error handling")
         e.printStackTrace()
     }

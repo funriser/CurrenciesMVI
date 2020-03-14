@@ -2,24 +2,28 @@ package com.revolut.converter.domain.entity
 
 import java.math.BigDecimal
 
-open class Currency(
+data class Currency(
     val code: String,
     val name: String,
-    val image: Int,
-    var amount: BigDecimal
+    val image: Int
 )
 
-class BaseCurrency(
-    code: String,
-    name: String,
-    image: Int,
-    amount: BigDecimal
-): Currency(code, name, image, amount)
-
-class ExchangeCurrency(
-    code: String,
-    name: String,
-    image: Int,
-    amount: BigDecimal,
+data class CurrencyRate(
+    val currency: Currency,
     val rate: BigDecimal
-) : Currency(code, name, image, amount)
+)
+
+data class ExchangeRates(
+    val baseCurrency: Currency,
+    val rates: List<CurrencyRate>
+)
+
+
+open class ConvertedCurrency(
+    val currency: Currency,
+    val amount: BigDecimal
+)
+class BaseConvertedCurrency(
+    currency: Currency,
+    amount: BigDecimal
+): ConvertedCurrency(currency, amount)

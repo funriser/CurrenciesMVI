@@ -1,27 +1,27 @@
 package com.revolut.converter.ui
 
 import androidx.recyclerview.widget.DiffUtil
-import com.revolut.converter.domain.entity.BaseCurrency
-import com.revolut.converter.domain.entity.Currency
+import com.revolut.converter.domain.entity.BaseConvertedCurrency
+import com.revolut.converter.domain.entity.ConvertedCurrency
 
 class CurrencyDiffCallback(
-    private val oldList: List<Currency>,
-    private val newList: List<Currency>
+    private val oldList: List<ConvertedCurrency>,
+    private val newList: List<ConvertedCurrency>
 ): DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldList[oldItemPosition]
         val newItem = newList[newItemPosition]
-        return oldItem.code == newItem.code
+        return oldItem.currency.code == newItem.currency.code
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldList[oldItemPosition]
         val newItem = newList[newItemPosition]
-        return if (oldItem is BaseCurrency && newItem is BaseCurrency) {
+        return if (oldItem is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
             true
         } else {
-            oldItem.code == newItem.code &&
+            oldItem.currency.code == newItem.currency.code &&
                     oldItem.amount.toString() == newItem.amount.toString()
         }
     }

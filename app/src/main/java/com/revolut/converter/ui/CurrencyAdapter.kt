@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.converter.R
 import com.revolut.converter.core.inflate
-import com.revolut.converter.domain.entity.BaseCurrency
+import com.revolut.converter.domain.entity.BaseConvertedCurrency
 import com.revolut.converter.domain.entity.Currency
-import com.revolut.converter.domain.entity.ExchangeCurrency
+import com.revolut.converter.domain.entity.ConvertedCurrency
 import kotlinx.android.synthetic.main.item_currency.view.*
 import java.math.BigDecimal
 
@@ -21,7 +21,7 @@ class CurrencyAdapter(
         const val PAYLOAD_CURRENCY =  16
     }
 
-    var items = listOf<Currency>()
+    var items = listOf<ConvertedCurrency>()
         private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,7 +44,7 @@ class CurrencyAdapter(
         return items.size
     }
 
-    fun setItems(currencies: List<Currency>) {
+    fun setItems(currencies: List<ConvertedCurrency>) {
         val diff = DiffUtil.calculateDiff(CurrencyDiffCallback(items, currencies))
         items = currencies
         diff.dispatchUpdatesTo(this)
@@ -54,23 +54,15 @@ class CurrencyAdapter(
 
         private var textWatcher: TextWatcher? = null
 
-        fun bind(viewModel: ConverterViewModel, currency: Currency) {
+        fun bind(viewModel: ConverterViewModel, currency: ConvertedCurrency) {
             clearWatcher()
-            with(itemView) {
-                tvCurrencyTitle.text = currency.code
-                tvCurrencyCountry.text = currency.name
-                if (currency.image != -1) {
-                    ivCurrency.setImageResource(currency.image)
-                } else {
-                    ivCurrency.setImageResource(android.R.color.transparent)
+            bindCurrency(currency.currency)
+            when(currency) {
+                is BaseConvertedCurrency -> {
+                    bindBaseCurrency(viewModel, currency)
                 }
-                when(currency) {
-                    is BaseCurrency -> {
-                        bindBaseCurrency(viewModel, currency)
-                    }
-                    is ExchangeCurrency -> {
-                        bindExchangeCurrency(currency)
-                    }
+                else -> {
+                    bindExchangeCurrency(currency)
                 }
             }
         }
@@ -79,14 +71,26 @@ class CurrencyAdapter(
             itemView.edAmount.setText(newAmount.toString())
         }
 
-        private fun bindBaseCurrency(viewModel: ConverterViewModel, baseCurrency: BaseCurrency) {
-            val textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, baseCurrency)
-            itemView.edAmount.setText(baseCurrency.amount.toString())
+        private fun bindCurrency(currency: Currency) {
+            with(currency) {
+                itemView.tvCurrencyTitle.text = code
+                itemView.tvCurrencyCountry.text = name
+                if (image != -1) {
+                    itemView.ivCurrency.setImageResource(image)
+                } else {
+                    itemView.ivCurrency.setImageResource(android.R.color.transparent)
+                }
+            }
+        }
+
+        private fun bindBaseCurrency(viewModel: ConverterViewModel, baseExchangeCurrency: BaseConvertedCurrency) {
+            val textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, baseExchangeCurrency)
+            itemView.edAmount.setText(baseExchangeCurrency.amount.toString())
             itemView.edAmount.addTextChangedListener(textWatcher)
         }
 
-        private fun bindExchangeCurrency(exchangeCurrency: ExchangeCurrency) {
-            itemView.edAmount.setText(exchangeCurrency.amount.toString())
+        private fun bindExchangeCurrency(convertedCurrency: ConvertedCurrency) {
+            itemView.edAmount.setText(convertedCurrency.amount.toString())
         }
 
         private fun clearWatcher() {
