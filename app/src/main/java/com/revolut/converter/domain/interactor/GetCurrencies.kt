@@ -2,6 +2,7 @@ package com.revolut.converter.domain.interactor
 
 import com.revolut.converter.domain.UseCase
 import com.revolut.converter.domain.defScale
+import com.revolut.converter.domain.entity.BaseCurrency
 import com.revolut.converter.domain.entity.Currency
 import com.revolut.converter.domain.entity.ExchangeCurrency
 import com.revolut.converter.domain.executor.Executor
@@ -30,9 +31,15 @@ class GetCurrencies @Inject constructor(
     }
 
     private fun applyExchange(currencies: List<Currency>, amount: Double) {
+        val amountToExchange = amount.toDecimal()
         currencies.forEach {
-            if (it is ExchangeCurrency) {
-                it.finalAmount = (it.rate * amount.toDecimal()).defScale()
+            when(it) {
+                is ExchangeCurrency -> {
+                    it.amount = (it.rate * amountToExchange).defScale()
+                }
+                is BaseCurrency -> {
+                    it.amount = amountToExchange
+                }
             }
         }
     }

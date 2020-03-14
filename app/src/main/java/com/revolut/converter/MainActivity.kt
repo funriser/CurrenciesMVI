@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.revolut.converter.core.observe
 import com.revolut.converter.core.viewModel
 import com.revolut.converter.di.ViewModelFactory
@@ -43,6 +44,17 @@ class MainActivity : AppCompatActivity() {
                 supportsChangeAnimations = false
             }
             adapter = currencyAdapter
+            addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
+                        if (viewModel.rates.hasObservers()) {
+                            viewModel.rates.removeObservers(this@MainActivity)
+                        }
+                    } else {
+                        observe(viewModel.rates, ::renderCurrencyRates)
+                    }
+                }
+            })
         }
     }
 

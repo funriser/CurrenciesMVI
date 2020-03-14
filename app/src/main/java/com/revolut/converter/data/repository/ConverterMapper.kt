@@ -25,7 +25,8 @@ class ConverterMapper @Inject constructor() {
         return BaseCurrency(
             code = ratesDto.baseCurrency,
             name = currencyData?.name.orEmpty(),
-            image = currencyData?.flag?:-1
+            image = currencyData?.flag?:-1,
+            amount = ZERO
         )
     }
 
@@ -38,7 +39,7 @@ class ConverterMapper @Inject constructor() {
             name = currencyData?.name.orEmpty(),
             image = currencyData?.flag?:-1,
             rate = rate.value.toDecimal(),
-            finalAmount = ZERO
+            amount = ZERO
         )
     }
 
