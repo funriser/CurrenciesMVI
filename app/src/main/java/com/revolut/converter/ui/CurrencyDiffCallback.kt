@@ -19,10 +19,12 @@ class CurrencyDiffCallback(
         val oldItem = oldList[oldItemPosition]
         val newItem = newList[newItemPosition]
         return if (oldItem is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
-            true
-        } else {
+           true
+        } else if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
             oldItem.currency.code == newItem.currency.code &&
                     oldItem.amount.toString() == newItem.amount.toString()
+        } else {
+            false
         }
     }
 
@@ -39,6 +41,8 @@ class CurrencyDiffCallback(
         val newItem = newList[newItemPosition]
         return if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
             CurrencyAdapter.PAYLOAD_CURRENCY
+        } else if (oldItem !is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
+            CurrencyAdapter.PAYLOAD_NEW_BASIC
         } else {
             null
         }

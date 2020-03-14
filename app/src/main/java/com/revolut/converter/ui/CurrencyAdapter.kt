@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.revolut.converter.R
 import com.revolut.converter.core.inflate
 import com.revolut.converter.domain.entity.BaseConvertedCurrency
-import com.revolut.converter.domain.entity.Currency
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import kotlinx.android.synthetic.main.item_currency.view.*
 import java.math.BigDecimal
@@ -19,6 +18,7 @@ class CurrencyAdapter(
 
     companion object {
         const val PAYLOAD_CURRENCY =  16
+        const val PAYLOAD_NEW_BASIC = 32
     }
 
     var items = listOf<ConvertedCurrency>()
@@ -29,8 +29,15 @@ class CurrencyAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isNotEmpty() && payloads[0] == PAYLOAD_CURRENCY) {
-            holder.bindAmount(items[position].amount)
+        if (payloads.isNotEmpty()) {
+            when(payloads[0]) {
+                PAYLOAD_CURRENCY -> {
+                    holder.bindAmount(items[position].amount)
+                }
+                PAYLOAD_NEW_BASIC -> {
+                    holder.bindBaseCurrency(viewModel, items[position])
+                }
+            }
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
@@ -56,7 +63,7 @@ class CurrencyAdapter(
 
         fun bind(viewModel: ConverterViewModel, currency: ConvertedCurrency) {
             clearWatcher()
-            bindCurrency(currency.currency)
+            bindCurrency(currency)
             when(currency) {
                 is BaseConvertedCurrency -> {
                     bindBaseCurrency(viewModel, currency)
@@ -67,12 +74,8 @@ class CurrencyAdapter(
             }
         }
 
-        fun bindAmount(newAmount: BigDecimal) {
-            itemView.edAmount.setText(newAmount.toString())
-        }
-
-        private fun bindCurrency(currency: Currency) {
-            with(currency) {
+        private fun bindCurrency(convertedCurrency: ConvertedCurrency) {
+            with(convertedCurrency.currency) {
                 itemView.tvCurrencyTitle.text = code
                 itemView.tvCurrencyCountry.text = name
                 if (image != -1) {
@@ -80,23 +83,32 @@ class CurrencyAdapter(
                 } else {
                     itemView.ivCurrency.setImageResource(android.R.color.transparent)
                 }
+                itemView.edAmount.setText(convertedCurrency.amount.toString())
             }
         }
 
-        private fun bindBaseCurrency(viewModel: ConverterViewModel, baseExchangeCurrency: BaseConvertedCurrency) {
-            val textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, baseExchangeCurrency)
-            itemView.edAmount.setText(baseExchangeCurrency.amount.toString())
+        fun bindBaseCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
+            val textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, convertedCurrency)
             itemView.edAmount.addTextChangedListener(textWatcher)
             itemView.setOnClickListener(null)
+            itemView.edAmount.onFocusChangeListener = null
         }
 
         private fun bindExchangeCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
-            itemView.edAmount.setText(convertedCurrency.amount.toString())
             itemView.setOnClickListener {
                 (itemView.parent as View).clearFocus()
                 itemView.edAmount.requestFocus()
                 viewModel.onNewExchangeAmount(convertedCurrency, itemView.edAmount.text.toString())
             }
+            itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    viewModel.onNewExchangeAmount(convertedCurrency, itemView.edAmount.text.toString())
+                }
+            }
+        }
+
+        fun bindAmount(newAmount: BigDecimal) {
+            itemView.edAmount.setText(newAmount.toString())
         }
 
         private fun clearWatcher() {
