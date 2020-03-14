@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.revolut.converter.core.plusAssign
 import com.revolut.converter.domain.HUNDRED
-import com.revolut.converter.domain.entity.BaseConvertedCurrency
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.domain.interactor.GetConvertedCurrencies
 import com.revolut.converter.domain.toDecimal
@@ -27,8 +26,8 @@ class ConverterViewModel @Inject constructor(
         getCurrencies(defaultParams)
     }
 
-    fun onNewExchangeAmount(baseExchangeCurrency: BaseConvertedCurrency, amount: String) {
-        val code = baseExchangeCurrency.currency.code
+    fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String) {
+        val code = currency.currency.code
         val exchangeAmount = amount.toDecimal()
         val params = GetConvertedCurrencies.Params(code, exchangeAmount)
         getCurrencies(params)

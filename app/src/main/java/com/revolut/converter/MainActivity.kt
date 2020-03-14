@@ -40,9 +40,7 @@ class MainActivity : AppCompatActivity() {
         currencyAdapter = CurrencyAdapter(viewModel)
         rvCurrencyRates.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            itemAnimator = DefaultItemAnimator().apply {
-                supportsChangeAnimations = false
-            }
+            itemAnimator = DefaultItemAnimator()
             adapter = currencyAdapter
             addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

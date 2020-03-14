@@ -35,7 +35,13 @@ class CurrencyDiffCallback(
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        return CurrencyAdapter.PAYLOAD_CURRENCY
+        val oldItem = oldList[oldItemPosition]
+        val newItem = newList[newItemPosition]
+        return if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
+            CurrencyAdapter.PAYLOAD_CURRENCY
+        } else {
+            null
+        }
     }
 
 }

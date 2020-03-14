@@ -62,7 +62,7 @@ class CurrencyAdapter(
                     bindBaseCurrency(viewModel, currency)
                 }
                 else -> {
-                    bindExchangeCurrency(currency)
+                    bindExchangeCurrency(viewModel, currency)
                 }
             }
         }
@@ -87,10 +87,16 @@ class CurrencyAdapter(
             val textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, baseExchangeCurrency)
             itemView.edAmount.setText(baseExchangeCurrency.amount.toString())
             itemView.edAmount.addTextChangedListener(textWatcher)
+            itemView.setOnClickListener(null)
         }
 
-        private fun bindExchangeCurrency(convertedCurrency: ConvertedCurrency) {
+        private fun bindExchangeCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
             itemView.edAmount.setText(convertedCurrency.amount.toString())
+            itemView.setOnClickListener {
+                (itemView.parent as View).clearFocus()
+                itemView.edAmount.requestFocus()
+                viewModel.onNewExchangeAmount(convertedCurrency, itemView.edAmount.text.toString())
+            }
         }
 
         private fun clearWatcher() {
