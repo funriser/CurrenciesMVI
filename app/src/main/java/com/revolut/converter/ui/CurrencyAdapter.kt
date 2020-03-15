@@ -64,6 +64,7 @@ class CurrencyAdapter(
         fun bind(viewModel: ConverterViewModel, currency: ConvertedCurrency) {
             clearWatcher()
             bindCurrency(currency)
+            bindAmount(currency.amount)
             when(currency) {
                 is BaseConvertedCurrency -> {
                     bindBaseCurrency(viewModel, currency)
@@ -83,15 +84,20 @@ class CurrencyAdapter(
                 } else {
                     itemView.ivCurrency.setImageResource(android.R.color.transparent)
                 }
-                itemView.edAmount.setText(convertedCurrency.amount.toString())
             }
         }
 
         fun bindBaseCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
-            val textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, convertedCurrency)
-            itemView.edAmount.addTextChangedListener(textWatcher)
             itemView.setOnClickListener(null)
-            itemView.edAmount.onFocusChangeListener = null
+            itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    setInputWatcher(viewModel, convertedCurrency)
+                } else {
+                    clearWatcher()
+                    (itemView.parent as ViewGroup).isFocusable = false
+                }
+            }
+            itemView.edAmount.filters = arrayOf(BaseCurrencyLengthFilter())
         }
 
         private fun bindExchangeCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
@@ -102,13 +108,23 @@ class CurrencyAdapter(
             }
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
+                    setInputWatcher(viewModel, convertedCurrency)
                     viewModel.onNewExchangeAmount(convertedCurrency, itemView.edAmount.text.toString())
+                } else {
+                    clearWatcher()
                 }
             }
+            itemView.edAmount.filters = arrayOf()
         }
 
         fun bindAmount(newAmount: BigDecimal) {
-            itemView.edAmount.setText(newAmount.toString())
+            val amountStr = DecimalFormat.toDecimalString(newAmount, true)
+            itemView.edAmount.setText(amountStr)
+        }
+
+        private fun setInputWatcher(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
+            textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, convertedCurrency)
+            itemView.edAmount.addTextChangedListener(textWatcher)
         }
 
         private fun clearWatcher() {

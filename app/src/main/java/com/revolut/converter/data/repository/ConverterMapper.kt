@@ -3,7 +3,6 @@ package com.revolut.converter.data.repository
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import com.revolut.converter.data.dto.CurrencyRatesDto
 import com.revolut.converter.domain.entity.*
-import com.revolut.converter.domain.toDecimal
 import javax.inject.Inject
 
 class ConverterMapper @Inject constructor() {
@@ -31,7 +30,7 @@ class ConverterMapper @Inject constructor() {
 
     private fun getCurrencyRate(rateEntry: Map.Entry<String, String>): CurrencyRate {
         val currency = getCurrency(rateEntry.key)
-        return CurrencyRate(currency, rateEntry.value.toDecimal())
+        return CurrencyRate(currency, rateEntry.value.toBigDecimal())
     }
 
 }

@@ -7,7 +7,6 @@ import com.revolut.converter.core.plusAssign
 import com.revolut.converter.domain.HUNDRED
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.domain.interactor.GetConvertedCurrencies
-import com.revolut.converter.domain.toDecimal
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -28,7 +27,7 @@ class ConverterViewModel @Inject constructor(
 
     fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String) {
         val code = currency.currency.code
-        val exchangeAmount = amount.toDecimal()
+        val exchangeAmount = DecimalFormat.fromDecimalString(amount)
         val params = GetConvertedCurrencies.Params(code, exchangeAmount)
         getCurrencies(params)
     }

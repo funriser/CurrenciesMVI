@@ -21,7 +21,7 @@ class GetConvertedCurrencies @Inject constructor(
 
     override fun buildObservable(params: Params): Observable<List<ConvertedCurrency>> {
         return Observable.concat(
-                mutableListOf(
+                listOf(
                     getConvertedCurrencies(params, false).toObservable(),
                     scheduleRateUpdates(params)
                 )
@@ -64,14 +64,19 @@ class GetConvertedCurrencies @Inject constructor(
     }
 
     private fun scheduleRateUpdates(params: Params): Observable<List<ConvertedCurrency>> {
-        return Flowable.interval(1, TimeUnit.SECONDS)
-            .onBackpressureDrop()
-            .concatMapSingle {
-                getConvertedCurrencies(params, true)
-            }
-            // throttle to avoid too fast emission after network slows down
-            .throttleLatest(1, TimeUnit.SECONDS)
-            .toObservable()
+        return if (params.amount == BigDecimal.ZERO) {
+            //no need to schedule update when input is null
+            Observable.empty()
+        } else {
+            Flowable.interval(1, TimeUnit.SECONDS)
+                .onBackpressureDrop()
+                .concatMapSingle {
+                    getConvertedCurrencies(params, true)
+                }
+                // throttle to avoid too fast emission after network slows down
+                .throttleLatest(1, TimeUnit.SECONDS)
+                .toObservable()
+        }
     }
 
     data class Params(
