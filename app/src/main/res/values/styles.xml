@@ -36,7 +36,7 @@
     <style name="Edit.Amount" parent="">
         <item name="android:textAppearance">@style/TextAppearance.Headline</item>
         <item name="android:inputType">numberDecimal</item>
-        <item name="android:digits">0123456789.,</item>
+        <item name="android:digits">0123456789.</item>
     </style>
 
 </resources>

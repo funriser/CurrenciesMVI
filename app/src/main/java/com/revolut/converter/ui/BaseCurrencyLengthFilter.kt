@@ -50,7 +50,7 @@ class BaseCurrencyLengthFilter: InputFilter {
             }
             //skip new value if total number of digits is too large
             if (digitsCount >= DIGITS_LIMIT) {
-                return ""
+                return stubInput(dest, dstart, dend)
             }
             //skip new value if fraction part is too large
             if (dstart > fractionPartInd && fractionCount > FRACTION_LIMIT) {
@@ -60,7 +60,7 @@ class BaseCurrencyLengthFilter: InputFilter {
             //that exceeds limit
             if (source == DecimalFormat.FRACTION_SIGN.toString() &&
                 (dest.length - dstart) > FRACTION_LIMIT) {
-                return ""
+                return stubInput(dest, dstart, dend)
             }
         }
         //if formatted decimal comes to filter
@@ -95,9 +95,11 @@ class BaseCurrencyLengthFilter: InputFilter {
         dstart: Int,
         dend: Int
     ): Boolean {
-        return (start == 0 && end == 0 &&
-                (dend - dstart) == dest.length &&
-                source.toString() == "")
+        val isDeleteIntent = start == 0 && end == 0 && source.toString() == ""
+        val isDeletingLastSymbol = (dend - dstart) == dest.length
+        val isDeletingLastFraction = dest.length == 2 && dest.first() == DecimalFormat.FRACTION_SIGN
+        return (isDeleteIntent && (isDeletingLastSymbol || isDeletingLastFraction)) ||
+                isDeletingLastSymbol && source == DecimalFormat.FRACTION_SIGN.toString()
     }
 
     private fun isKeyInputIntent(dest: Spanned, source: CharSequence): Boolean {
@@ -114,6 +116,14 @@ class BaseCurrencyLengthFilter: InputFilter {
 
     private fun isReplaceAllIntent(dest: Spanned, dstart: Int, dend: Int): Boolean {
         return dend - dstart == dest.length
+    }
+
+    private fun stubInput(dest: Spanned, dstart: Int, dend: Int): String {
+        return if (isReplaceAllIntent(dest, dstart, dend)) {
+            "0"
+        } else {
+            ""
+        }
     }
 
     private fun getProcessedBuffer(source: CharSequence, dest: Spanned, dstart: Int, lengthLimit: Int): String {
