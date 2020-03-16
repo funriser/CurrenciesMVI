@@ -6,8 +6,7 @@ import android.text.Spanned
 class BaseCurrencyLengthFilter: InputFilter {
 
     companion object {
-        private const val DIGITS = "0123456789,."
-        private const val BUFFER_LIMIT = 12
+        private const val DIGITS = "0123456789"
         private const val DIGITS_LIMIT = 9
         private const val FRACTION_LIMIT = 2
     }
@@ -69,16 +68,17 @@ class BaseCurrencyLengthFilter: InputFilter {
         }
         //trying to paste something to input
         if (isBufferInputIntent(dest, source)) {
+            val destDigitsLen = countDigits(dest)
             //how much symbols is replaced by buffer
-            val cutLength = dend - dstart
+            val cutDigitsLen = countDigits(dest.substring(dstart, dend))
             //if input is already out of bounds
-            val buffLimit = if (dest.length - cutLength >= BUFFER_LIMIT) {
+            val buffLimit = if (destDigitsLen - cutDigitsLen >= DIGITS_LIMIT) {
                 0
             } else {
-                BUFFER_LIMIT - dest.length + cutLength - 1
+                DIGITS_LIMIT - destDigitsLen + cutDigitsLen
             }
             //apply changes to be sure that buffer is valid
-            val processedBuffer = getProcessedBuffer(source, dest, dstart, buffLimit)
+            val processedBuffer = getProcessedBuffer(source, dest, dstart, dend, buffLimit)
             if (processedBuffer.isEmpty() && isReplaceAllIntent(dest, dstart, dend)) {
                 return "0"
             }
@@ -97,7 +97,9 @@ class BaseCurrencyLengthFilter: InputFilter {
     ): Boolean {
         val isDeleteIntent = start == 0 && end == 0 && source.toString() == ""
         val isDeletingLastSymbol = (dend - dstart) == dest.length
-        val isDeletingLastFraction = dest.length == 2 && dest.first() == DecimalFormat.FRACTION_SIGN
+        val isDeletingLastFraction = dest.isNotEmpty() &&
+                dest.first() == DecimalFormat.FRACTION_SIGN &&
+                (dend - dstart == dest.length - 1)
         return (isDeleteIntent && (isDeletingLastSymbol || isDeletingLastFraction)) ||
                 isDeletingLastSymbol && source == DecimalFormat.FRACTION_SIGN.toString()
     }
@@ -126,7 +128,17 @@ class BaseCurrencyLengthFilter: InputFilter {
         }
     }
 
-    private fun getProcessedBuffer(source: CharSequence, dest: Spanned, dstart: Int, lengthLimit: Int): String {
+    private fun countDigits(seq: CharSequence): Int {
+        return seq.count { DIGITS.contains(it) }
+    }
+
+    private fun getProcessedBuffer(
+        source: CharSequence,
+        dest: Spanned,
+        dstart: Int,
+        dend: Int,
+        lengthLimit: Int
+    ): String {
         val fractionPartInd = dest.indexOf(DecimalFormat.FRACTION_SIGN)
         val isAfterFractional = if (fractionPartInd == -1) {
             false
@@ -144,24 +156,33 @@ class BaseCurrencyLengthFilter: InputFilter {
         if (limit <= 0) {
             return ""
         }
-        val isFractionAllowed = dest.isEmpty()
+        val isFractionAllowed = dest.isEmpty() || isReplaceAllIntent(dest, dstart, dend)
         val resultBuffer = StringBuilder()
         run loop@ {
+            var resultLength = 0
             source.forEach {
                 //if symbol matches digit pattern and is supported
                 //by fraction part
-                if (DIGITS.contains(it) &&
+                if ((DIGITS.contains(it) || it == DecimalFormat.FRACTION_SIGN) &&
                     !(it == DecimalFormat.FRACTION_SIGN && !isFractionAllowed) &&
                     !(it == DecimalFormat.GROUP_SIGN && isAfterFractional)
                 ) {
                     resultBuffer.append(it)
+                    if (it != DecimalFormat.FRACTION_SIGN) {
+                        resultLength ++
+                    }
                 }
-                if (resultBuffer.length >= limit) {
+                if (resultLength >= limit) {
                     return@loop
                 }
             }
         }
-        return resultBuffer.toString()
+        val resultStr = resultBuffer.toString()
+        return if (resultStr == ".") {
+            ""
+        } else {
+            resultStr
+        }
     }
 
 }
