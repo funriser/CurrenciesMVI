@@ -6,6 +6,7 @@ import android.text.Spanned
 class BaseCurrencyLengthFilter: InputFilter {
 
     companion object {
+        private const val DIGITS = "0123456789,."
         private const val DIGITS_LIMIT = 9
         private const val FRACTION_LIMIT = 2
     }
@@ -21,8 +22,11 @@ class BaseCurrencyLengthFilter: InputFilter {
         if (dest == null || source == null) {
             return null
         }
-        //Put "0" if user is trying to delete last char from sequence
-        if (dest.length == 1 && source.toString() == "" && start == 0 && end == 0) {
+        //Put "0" if user is trying to delete the sequence
+        //or if user is trying to replace whole sequence with non-digit buffer
+        if (isClearIntent(source, start, end, dest, dstart, dend) ||
+            (isReplaceIntent(source, dest) && !isSourceAccepted(source))
+        ) {
             return "0"
         }
         //total digits in destination (fraction included)
@@ -56,6 +60,27 @@ class BaseCurrencyLengthFilter: InputFilter {
             return ""
         }
         return null
+    }
+
+    private fun isClearIntent(
+        source: CharSequence,
+        start: Int,
+        end: Int,
+        dest: Spanned,
+        dstart: Int,
+        dend: Int
+    ): Boolean {
+        return (start == 0 && end == 0 &&
+                (dend - dstart) == dest.length &&
+                source.toString() == "")
+    }
+
+    private fun isReplaceIntent(source: CharSequence, dest: Spanned): Boolean {
+        return source.length >= dest.length
+    }
+
+    private fun isSourceAccepted(source: CharSequence): Boolean {
+        return source.find { !DIGITS.contains(it) } == null
     }
 
 }
