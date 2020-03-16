@@ -62,7 +62,7 @@ class CurrencyAdapter(
         private var textWatcher: TextWatcher? = null
 
         fun bind(viewModel: ConverterViewModel, currency: ConvertedCurrency) {
-            clearWatcher()
+            releaseBaseCurrencyInput()
             bindCurrency(currency)
             bindAmount(currency.amount)
             when(currency) {
@@ -91,13 +91,12 @@ class CurrencyAdapter(
             itemView.setOnClickListener(null)
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    setInputWatcher(viewModel, convertedCurrency)
+                    setUpBaseCurrencyInput(viewModel, convertedCurrency)
                 } else {
-                    clearWatcher()
+                    releaseBaseCurrencyInput()
                     (itemView.parent as ViewGroup).isFocusable = false
                 }
             }
-            itemView.edAmount.filters = arrayOf(BaseCurrencyLengthFilter())
         }
 
         private fun bindExchangeCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
@@ -108,10 +107,10 @@ class CurrencyAdapter(
             }
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    setInputWatcher(viewModel, convertedCurrency)
+                    setUpBaseCurrencyInput(viewModel, convertedCurrency)
                     viewModel.onNewExchangeAmount(convertedCurrency, itemView.edAmount.text.toString())
                 } else {
-                    clearWatcher()
+                    releaseBaseCurrencyInput()
                 }
             }
             itemView.edAmount.filters = arrayOf()
@@ -122,15 +121,22 @@ class CurrencyAdapter(
             itemView.edAmount.setText(amountStr)
         }
 
-        private fun setInputWatcher(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
-            textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, convertedCurrency)
-            itemView.edAmount.addTextChangedListener(textWatcher)
+        private fun setUpBaseCurrencyInput(
+            viewModel: ConverterViewModel,
+            currency: ConvertedCurrency
+        ) {
+            textWatcher = BaseCurrencyTextWatcher(itemView.edAmount, viewModel, currency)
+            itemView.edAmount.apply {
+                addTextChangedListener(textWatcher)
+                filters = arrayOf(BaseCurrencyLengthFilter())
+            }
         }
 
-        private fun clearWatcher() {
+        private fun releaseBaseCurrencyInput() {
             textWatcher?.let {
                 itemView.edAmount.removeTextChangedListener(it)
             }
+            itemView.edAmount.filters = arrayOf()
         }
 
     }
