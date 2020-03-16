@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.core.observe
 import com.revolut.converter.core.viewModel
 import com.revolut.converter.di.ViewModelFactory
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = viewModel(viewModelFactory) {
             observe(rates, ::renderCurrencies)
+            observe(failure, ::renderFailure)
         }
 
         initView()
@@ -58,6 +60,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderCurrencies(rates: List<ConvertedCurrency>?) {
         currencyAdapter.setItems(rates.orEmpty())
+    }
+
+    private fun renderFailure(msg: String?) {
+        msg?:return
+        Snackbar
+            .make(rvCurrencyRates, msg, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.error_try_again) {
+                viewModel.getCurrencies()
+            }
+            .show()
     }
 
 }

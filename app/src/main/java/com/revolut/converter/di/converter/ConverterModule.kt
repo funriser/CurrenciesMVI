@@ -6,6 +6,8 @@ import com.revolut.converter.data.source.converter.ConverterRemoteSource
 import com.revolut.converter.data.source.converter.local.ConverterLocalSourceImpl
 import com.revolut.converter.data.source.converter.remote.ConverterRemoteSourceImpl
 import com.revolut.converter.domain.repository.ConverterRepository
+import com.revolut.converter.ui.error.ConverterErrorHandler
+import com.revolut.converter.ui.error.ErrorHandler
 import dagger.Binds
 import dagger.Module
 
@@ -29,5 +31,9 @@ abstract class ConverterModule {
     abstract fun converterLocalSource(
         converterLocalSourceImpl: ConverterLocalSourceImpl
     ): ConverterLocalSource
+
+    @Binds
+    @ConverterScope
+    abstract fun errorHandler(converterErrorHandler: ConverterErrorHandler): ErrorHandler
 
 }

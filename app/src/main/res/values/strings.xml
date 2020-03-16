@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Rates</string>
     <string name="description_currency_img">Currency image</string>
+
+    <string name="error_network">Connection error</string>
+    <string name="error_unknown">Oops, something went wrong</string>
+    <string name="error_try_again">Try again</string>
 </resources>
