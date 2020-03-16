@@ -17,7 +17,7 @@ class ConverterViewModel @Inject constructor(
     private val errorHandler: ErrorHandler
 ) : ViewModel() {
 
-    private var converterState = ConverterState("EUR", "100")
+    var converterState = ConverterState("EUR", "100")
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -29,16 +29,12 @@ class ConverterViewModel @Inject constructor(
         errorHandler.getErrorMessage(it)
     }
 
-    init {
-        getCurrencies()
-    }
-
     fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String) {
         val newState = ConverterState(currency.currency.code, amount)
-        getCurrencies(newState)
+        receiveCurrencyUpdates(newState)
     }
 
-    fun getCurrencies(state: ConverterState? = null) {
+    fun receiveCurrencyUpdates(state: ConverterState? = null) {
         if (state != null) {
             converterState = state
         }
@@ -48,6 +44,10 @@ class ConverterViewModel @Inject constructor(
         compositeDisposable += getConvertedCurrencies.buildObservable(params)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::onGetCurrenciesSuccess, ::onGetCurrenciesError)
+    }
+
+    fun stopReceivingCurrencyUpdates() {
+        compositeDisposable.clear()
     }
 
     private fun onGetCurrenciesSuccess(rates: List<ConvertedCurrency>) {

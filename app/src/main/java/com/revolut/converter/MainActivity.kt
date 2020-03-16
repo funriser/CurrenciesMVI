@@ -10,6 +10,7 @@ import com.revolut.converter.core.observe
 import com.revolut.converter.core.viewModel
 import com.revolut.converter.di.ViewModelFactory
 import com.revolut.converter.domain.entity.ConvertedCurrency
+import com.revolut.converter.ui.ConverterState
 import com.revolut.converter.ui.ConverterViewModel
 import com.revolut.converter.ui.CurrencyAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -35,7 +36,21 @@ class MainActivity : AppCompatActivity() {
             observe(failure, ::renderFailure)
         }
 
+        savedInstanceState?.getParcelable<ConverterState>(KEY_CONVERTER_STATE)?.let {
+            viewModel.converterState = it
+        }
+
         initView()
+    }
+
+    override fun onStart() {
+        viewModel.receiveCurrencyUpdates()
+        super.onStart()
+    }
+
+    override fun onStop() {
+        viewModel.stopReceivingCurrencyUpdates()
+        super.onStop()
     }
 
     private fun initView() {
@@ -67,9 +82,18 @@ class MainActivity : AppCompatActivity() {
         Snackbar
             .make(rvCurrencyRates, msg, Snackbar.LENGTH_INDEFINITE)
             .setAction(R.string.error_try_again) {
-                viewModel.getCurrencies()
+                viewModel.receiveCurrencyUpdates()
             }
             .show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable(KEY_CONVERTER_STATE, viewModel.converterState)
+        super.onSaveInstanceState(outState)
+    }
+
+    companion object {
+        private const val KEY_CONVERTER_STATE = "key_converter_state"
     }
 
 }
