@@ -1,4 +1,4 @@
-package com.revolut.converter.di
+package com.revolut.converter.core.di
 
 import com.revolut.converter.data.source.ConverterApi
 import com.revolut.converter.data.source.RetrofitClient

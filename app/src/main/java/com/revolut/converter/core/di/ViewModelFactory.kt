@@ -1,4 +1,4 @@
-package com.revolut.converter.di
+package com.revolut.converter.core.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

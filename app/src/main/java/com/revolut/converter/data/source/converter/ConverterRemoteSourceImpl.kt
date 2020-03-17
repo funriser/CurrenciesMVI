@@ -1,9 +1,8 @@
-package com.revolut.converter.data.source.converter.remote
+package com.revolut.converter.data.source.converter
 
 import com.revolut.converter.data.repository.ConverterMapper
 import com.revolut.converter.data.source.ApiHandler
 import com.revolut.converter.data.source.ConverterApi
-import com.revolut.converter.data.source.converter.ConverterRemoteSource
 import com.revolut.converter.domain.entity.ExchangeRates
 import io.reactivex.Single
 import javax.inject.Inject

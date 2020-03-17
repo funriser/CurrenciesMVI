@@ -1,15 +1,14 @@
-package com.revolut.converter.ui
+package com.revolut.converter.ui.input
 
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import com.revolut.converter.domain.entity.ConvertedCurrency
+import com.revolut.converter.ui.DecimalFormat
 
 class BaseCurrencyTextWatcher(
     private val editText: EditText,
-    private val viewModel: ConverterViewModel,
-    private val convertedCurrency: ConvertedCurrency
-): TextWatcher {
+    private val afterTextChanged: (String) -> Unit
+) : TextWatcher {
 
     private var lastInspectedSequence: String? = null
 
@@ -17,7 +16,11 @@ class BaseCurrencyTextWatcher(
         if (!editText.isFocused) {
             return
         }
-        viewModel.onNewExchangeAmount(convertedCurrency, s.toString())
+        val source = s.toString()
+        //should not propagate callback if there was no changes
+        if (lastInspectedSequence == source || source == "0") {
+            afterTextChanged.invoke(source)
+        }
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -26,17 +29,20 @@ class BaseCurrencyTextWatcher(
         }
         //if grouping character was deleted
         val trimmedSource = if (before == 1 && count == 0 &&
-            isGroupingChanged(start, lastInspectedSequence, s)) {
+            isGroupingChanged(start, lastInspectedSequence, s)
+        ) {
             s.removeRange(start - 1, start)
         } else {
             s
         }
         val fractionalInd = trimmedSource.indexOf(DecimalFormat.FRACTION_SIGN)
-        //return if only fractional part changed
+        //return if only fractional part was changed
         if (fractionalInd != -1 && start > fractionalInd) {
+            lastInspectedSequence = s.toString()
             return
         }
-        val formattedInput = DecimalFormat.toDecimalString(trimmedSource.toString())
+        val formattedInput =
+            DecimalFormat.toDecimalString(trimmedSource.toString())
         lastInspectedSequence = formattedInput
         //if formatted input differs from source
         if (s.toString() != formattedInput) {

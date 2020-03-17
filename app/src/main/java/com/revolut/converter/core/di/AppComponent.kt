@@ -1,7 +1,6 @@
-package com.revolut.converter.di
+package com.revolut.converter.core.di
 
-import com.revolut.converter.MainActivity
-import com.revolut.converter.di.converter.ConverterComponent
+import com.revolut.converter.core.di.converter.ConverterComponent
 import dagger.Component
 import javax.inject.Singleton
 

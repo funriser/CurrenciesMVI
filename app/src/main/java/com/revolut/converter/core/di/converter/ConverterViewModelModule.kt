@@ -1,9 +1,9 @@
-package com.revolut.converter.di.converter
+package com.revolut.converter.core.di.converter
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.revolut.converter.di.ViewModelFactory
-import com.revolut.converter.di.ViewModelKey
+import com.revolut.converter.core.di.ViewModelFactory
+import com.revolut.converter.core.di.ViewModelKey
 import com.revolut.converter.ui.ConverterViewModel
 import dagger.Binds
 import dagger.Module

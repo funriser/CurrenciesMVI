@@ -1,9 +1,10 @@
-package com.revolut.converter.ui
+package com.revolut.converter.ui.input
 
 import android.text.InputFilter
 import android.text.Spanned
+import com.revolut.converter.ui.DecimalFormat
 
-class BaseCurrencyLengthFilter: InputFilter {
+class BaseCurrencyLengthFilter : InputFilter {
 
     companion object {
         private const val DIGITS = "0123456789"
@@ -34,16 +35,17 @@ class BaseCurrencyLengthFilter: InputFilter {
             var fractionPartInd = -1
             dest.forEachIndexed { i, c ->
                 if (c != DecimalFormat.FRACTION_SIGN && c != DecimalFormat.GROUP_SIGN) {
-                    digitsCount ++
+                    digitsCount++
                 }
                 if (fractionCount != 0) {
-                    fractionCount ++
+                    fractionCount++
                 }
                 if (c == DecimalFormat.FRACTION_SIGN) {
+                    //do nothing if we already have fraction sign
                     if (source == DecimalFormat.FRACTION_SIGN.toString()) {
                         return ""
                     }
-                    fractionCount ++
+                    fractionCount++
                     fractionPartInd = i
                 }
             }
@@ -58,7 +60,8 @@ class BaseCurrencyLengthFilter: InputFilter {
             //skip new value if user trying to make new fraction part
             //that exceeds limit
             if (source == DecimalFormat.FRACTION_SIGN.toString() &&
-                (dest.length - dstart) > FRACTION_LIMIT) {
+                (dest.length - dstart) > FRACTION_LIMIT
+            ) {
                 return stubInput(dest, dstart, dend)
             }
         }
@@ -98,7 +101,8 @@ class BaseCurrencyLengthFilter: InputFilter {
         val isDeleteIntent = start == 0 && end == 0 && source.toString() == ""
         val isDeletingLastSymbol = (dend - dstart) == dest.length
         val clearedDest = dest.removeRange(dstart until dend)
-        val isDeletingLastFraction = clearedDest.toString() == DecimalFormat.FRACTION_SIGN.toString()
+        val isDeletingLastFraction =
+            clearedDest.toString() == DecimalFormat.FRACTION_SIGN.toString()
         return (isDeleteIntent && (isDeletingLastSymbol || isDeletingLastFraction)) ||
                 isDeletingLastSymbol && source == DecimalFormat.FRACTION_SIGN.toString()
     }
@@ -146,8 +150,10 @@ class BaseCurrencyLengthFilter: InputFilter {
         }
         //after fraction part buffer is limited to 2 signs
         val fractionalPlaces = dest.length - dstart
-        val limit = if (fractionPartInd != -1 && isAfterFractional
-            && fractionalPlaces <= FRACTION_LIMIT) {
+        val limit = if (
+            fractionPartInd != -1 && isAfterFractional
+            && fractionalPlaces <= FRACTION_LIMIT
+        ) {
             fractionalPlaces
         } else {
             lengthLimit
@@ -157,7 +163,7 @@ class BaseCurrencyLengthFilter: InputFilter {
         }
         val isFractionAllowed = dest.isEmpty() || isReplaceAllIntent(dest, dstart, dend)
         val resultBuffer = StringBuilder()
-        run loop@ {
+        run loop@{
             var resultLength = 0
             var hasFraction = false
             source.forEach {
@@ -167,10 +173,11 @@ class BaseCurrencyLengthFilter: InputFilter {
                     !(it == DecimalFormat.FRACTION_SIGN && !isFractionAllowed) &&
                     !(it == DecimalFormat.GROUP_SIGN && isAfterFractional)
                 ) {
+                    //if fraction is absent in the result buffer
                     if (!(hasFraction && it == DecimalFormat.FRACTION_SIGN)) {
                         resultBuffer.append(it)
                         if (it != DecimalFormat.FRACTION_SIGN) {
-                            resultLength ++
+                            resultLength++
                         } else {
                             hasFraction = true
                         }

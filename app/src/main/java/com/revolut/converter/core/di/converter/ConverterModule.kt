@@ -1,10 +1,10 @@
-package com.revolut.converter.di.converter
+package com.revolut.converter.core.di.converter
 
 import com.revolut.converter.data.repository.ConverterRepositoryImpl
 import com.revolut.converter.data.source.converter.ConverterLocalSource
 import com.revolut.converter.data.source.converter.ConverterRemoteSource
-import com.revolut.converter.data.source.converter.local.ConverterLocalSourceImpl
-import com.revolut.converter.data.source.converter.remote.ConverterRemoteSourceImpl
+import com.revolut.converter.data.source.converter.ConverterLocalSourceImpl
+import com.revolut.converter.data.source.converter.ConverterRemoteSourceImpl
 import com.revolut.converter.domain.repository.ConverterRepository
 import com.revolut.converter.ui.error.ConverterErrorHandler
 import com.revolut.converter.ui.error.ErrorHandler

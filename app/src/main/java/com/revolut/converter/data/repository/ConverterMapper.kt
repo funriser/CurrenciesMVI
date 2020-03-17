@@ -23,7 +23,7 @@ class ConverterMapper @Inject constructor() {
             return Currency(
                 code = currencyCode,
                 name = it?.name.orEmpty(),
-                image = it?.flag?:-1
+                image = it?.flag ?: -1
             )
         }
     }

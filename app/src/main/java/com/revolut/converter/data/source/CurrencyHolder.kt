@@ -1,6 +1,6 @@
 package com.revolut.converter.data.source
 
-import com.revolut.converter.di.converter.ConverterScope
+import com.revolut.converter.core.di.converter.ConverterScope
 import com.revolut.converter.domain.entity.ExchangeRates
 import javax.inject.Inject
 

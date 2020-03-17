@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.core.observe
 import com.revolut.converter.core.viewModel
-import com.revolut.converter.di.ViewModelFactory
+import com.revolut.converter.core.di.ViewModelFactory
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.ConverterState
 import com.revolut.converter.ui.ConverterViewModel
@@ -55,21 +55,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         currencyAdapter = CurrencyAdapter(viewModel)
+        val scrollListener = getOnScrollListener()
         rvCurrencyRates.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             itemAnimator = DefaultItemAnimator()
             adapter = currencyAdapter
-            addOnScrollListener(object: RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    if (scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
-                        if (viewModel.rates.hasObservers()) {
-                            viewModel.rates.removeObservers(this@MainActivity)
-                        }
-                    } else {
-                        observe(viewModel.rates, ::renderCurrencies)
+            addOnScrollListener(scrollListener)
+        }
+    }
+
+    private fun getOnScrollListener(): RecyclerView.OnScrollListener {
+        return object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (rvCurrencyRates.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    //suspend update receiving on scrolling to increase performance
+                    if (viewModel.rates.hasObservers()) {
+                        viewModel.rates.removeObservers(this@MainActivity)
                     }
+                } else {
+                    observe(viewModel.rates, ::renderCurrencies)
                 }
-            })
+            }
         }
     }
 

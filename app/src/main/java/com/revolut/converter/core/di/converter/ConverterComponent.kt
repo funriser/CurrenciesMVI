@@ -1,4 +1,4 @@
-package com.revolut.converter.di.converter
+package com.revolut.converter.core.di.converter
 
 import com.revolut.converter.MainActivity
 import dagger.Subcomponent

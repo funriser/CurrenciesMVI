@@ -1,16 +1,14 @@
 package com.revolut.converter
 
 import android.app.Application
-import com.revolut.converter.di.AndroidModule
-import com.revolut.converter.di.AppComponent
-import com.revolut.converter.di.DaggerAppComponent
+import com.revolut.converter.core.di.AndroidModule
+import com.revolut.converter.core.di.AppComponent
+import com.revolut.converter.core.di.DaggerAppComponent
 
 class App: Application() {
 
     companion object {
-
         lateinit var appComponent: AppComponent
-
     }
 
     override fun onCreate() {

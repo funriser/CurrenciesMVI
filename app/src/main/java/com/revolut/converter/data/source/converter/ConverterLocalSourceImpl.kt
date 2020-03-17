@@ -1,7 +1,6 @@
-package com.revolut.converter.data.source.converter.local
+package com.revolut.converter.data.source.converter
 
 import com.revolut.converter.data.source.CurrencyHolder
-import com.revolut.converter.data.source.converter.ConverterLocalSource
 import com.revolut.converter.domain.entity.ExchangeRates
 import io.reactivex.Single
 import javax.inject.Inject

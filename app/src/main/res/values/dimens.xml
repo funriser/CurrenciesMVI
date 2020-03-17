@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="marginXl">20dp</dimen>
     <dimen name="marginL">16dp</dimen>
-    <dimen name="marginM">10dp</dimen>
-    <dimen name="marginS">5dp</dimen>
     <dimen name="marginLayout">@dimen/marginL</dimen>
     <dimen name="marginToolbar">72dp</dimen>
-
     <dimen name="textHeadline">20sp</dimen>
-
     <dimen name="img_size">40dp</dimen>
-
 </resources>
