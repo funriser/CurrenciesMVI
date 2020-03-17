@@ -1,6 +1,7 @@
 package com.revolut.converter.ui
 
 import android.text.TextWatcher
+import android.text.method.DigitsKeyListener
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -87,6 +88,8 @@ class CurrencyAdapter(
                     itemView.ivCurrency.setImageResource(android.R.color.transparent)
                 }
             }
+            itemView.edAmount.keyListener =
+                DigitsKeyListener.getInstance(DecimalFormat.ACCEPTED_INPUT)
         }
 
         fun bindBaseCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {

@@ -3,11 +3,11 @@ package com.revolut.converter.ui.input
 import android.text.InputFilter
 import android.text.Spanned
 import com.revolut.converter.ui.DecimalFormat
+import com.revolut.converter.ui.DecimalFormat.DIGITS
 
 class BaseCurrencyLengthFilter : InputFilter {
 
     companion object {
-        private const val DIGITS = "0123456789"
         private const val DIGITS_LIMIT = 9
         private const val FRACTION_LIMIT = 2
     }
@@ -189,7 +189,7 @@ class BaseCurrencyLengthFilter : InputFilter {
             }
         }
         val resultStr = resultBuffer.toString()
-        return if (resultStr == ".") {
+        return if (resultStr == DecimalFormat.FRACTION_SIGN.toString()) {
             ""
         } else {
             resultStr

@@ -1,11 +1,18 @@
 package com.revolut.converter.ui
 
 import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 object DecimalFormat {
 
-    const val FRACTION_SIGN = '.'
-    const val GROUP_SIGN = ','
+    private val symbolsFormat = DecimalFormatSymbols.getInstance()
+    private val decimalFormat = DecimalFormat.getInstance()
+
+    const val DIGITS = "0123456789"
+    val FRACTION_SIGN = symbolsFormat.decimalSeparator
+    val GROUP_SIGN = symbolsFormat.groupingSeparator
+    val ACCEPTED_INPUT = DIGITS + FRACTION_SIGN
 
     fun toDecimalString(source: String, cutFractionZero: Boolean = false): String {
         val fractionalSignInd = source.indexOf(FRACTION_SIGN)
@@ -40,11 +47,12 @@ object DecimalFormat {
     }
 
     fun toDecimalString(amount: BigDecimal, cutFractionZero: Boolean = false): String {
-        return toDecimalString(amount.toString(), cutFractionZero)
+        return toDecimalString(decimalFormat.format(amount), cutFractionZero)
     }
 
     fun fromDecimalString(s: String): BigDecimal {
         val pureStr = s.replace(GROUP_SIGN.toString(), "")
+            .replace(FRACTION_SIGN.toString(), ".")
         return pureStr.toBigDecimal()
     }
 
