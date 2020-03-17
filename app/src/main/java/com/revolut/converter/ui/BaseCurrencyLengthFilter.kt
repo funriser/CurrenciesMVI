@@ -97,9 +97,8 @@ class BaseCurrencyLengthFilter: InputFilter {
     ): Boolean {
         val isDeleteIntent = start == 0 && end == 0 && source.toString() == ""
         val isDeletingLastSymbol = (dend - dstart) == dest.length
-        val isDeletingLastFraction = dest.isNotEmpty() &&
-                dest.first() == DecimalFormat.FRACTION_SIGN &&
-                (dend - dstart == dest.length - 1)
+        val clearedDest = dest.removeRange(dstart until dend)
+        val isDeletingLastFraction = clearedDest.toString() == DecimalFormat.FRACTION_SIGN.toString()
         return (isDeleteIntent && (isDeletingLastSymbol || isDeletingLastFraction)) ||
                 isDeletingLastSymbol && source == DecimalFormat.FRACTION_SIGN.toString()
     }
@@ -160,6 +159,7 @@ class BaseCurrencyLengthFilter: InputFilter {
         val resultBuffer = StringBuilder()
         run loop@ {
             var resultLength = 0
+            var hasFraction = false
             source.forEach {
                 //if symbol matches digit pattern and is supported
                 //by fraction part
@@ -167,9 +167,13 @@ class BaseCurrencyLengthFilter: InputFilter {
                     !(it == DecimalFormat.FRACTION_SIGN && !isFractionAllowed) &&
                     !(it == DecimalFormat.GROUP_SIGN && isAfterFractional)
                 ) {
-                    resultBuffer.append(it)
-                    if (it != DecimalFormat.FRACTION_SIGN) {
-                        resultLength ++
+                    if (!(hasFraction && it == DecimalFormat.FRACTION_SIGN)) {
+                        resultBuffer.append(it)
+                        if (it != DecimalFormat.FRACTION_SIGN) {
+                            resultLength ++
+                        } else {
+                            hasFraction = true
+                        }
                     }
                 }
                 if (resultLength >= limit) {
