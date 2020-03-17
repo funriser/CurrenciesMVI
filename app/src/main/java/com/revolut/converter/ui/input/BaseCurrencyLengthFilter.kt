@@ -5,6 +5,18 @@ import android.text.Spanned
 import com.revolut.converter.ui.DecimalFormat
 import com.revolut.converter.ui.DecimalFormat.DIGITS
 
+/**
+ * Filters base currency input
+ * Accepts only digits and characters used for grouping
+ * and separating decimals
+ *
+ * Limits total count of decimals
+ *
+ * Responsible for keeping decimal value in input
+ * Filters duplicated fraction points and empty states
+ *
+ * Inspects and filters exchange buffer before performing copy/paste
+ */
 class BaseCurrencyLengthFilter : InputFilter {
 
     companion object {

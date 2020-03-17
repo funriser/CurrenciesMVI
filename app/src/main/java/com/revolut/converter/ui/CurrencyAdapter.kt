@@ -35,9 +35,11 @@ class CurrencyAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
             when (payloads[0]) {
+                //if only currency amount changed
                 PAYLOAD_CURRENCY -> {
                     holder.bindAmount(items[position].amount)
                 }
+                //if switched to the new basic currency
                 PAYLOAD_NEW_BASIC -> {
                     holder.bindBaseCurrency(viewModel, items[position])
                 }
@@ -79,6 +81,9 @@ class CurrencyAdapter(
             }
         }
 
+        /**
+         * Performs binding of the main currency info
+         */
         private fun bindCurrency(convertedCurrency: ConvertedCurrency) {
             with(convertedCurrency.currency) {
                 itemView.tvCurrencyTitle.text = code
@@ -93,6 +98,9 @@ class CurrencyAdapter(
                 DigitsKeyListener.getInstance(DecimalFormat.ACCEPTED_INPUT)
         }
 
+        /**
+         * Performs binding related only to base currency
+         */
         fun bindBaseCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
             itemView.setOnClickListener(null)
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
@@ -105,6 +113,9 @@ class CurrencyAdapter(
             }
         }
 
+        /**
+         * Performs binding related only to currencies that show rates
+         */
         private fun bindExchangeCurrency(
             viewModel: ConverterViewModel,
             convertedCurrency: ConvertedCurrency
@@ -125,6 +136,9 @@ class CurrencyAdapter(
             itemView.edAmount.filters = arrayOf()
         }
 
+        /**
+         * Just binds total amount for currency
+         */
         fun bindAmount(newAmount: BigDecimal) {
             val amountStr = DecimalFormat.toDecimalString(newAmount, true)
             if (amountStr == "0") {

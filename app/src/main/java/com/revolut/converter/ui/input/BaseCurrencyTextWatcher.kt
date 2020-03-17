@@ -5,6 +5,9 @@ import android.text.TextWatcher
 import android.widget.EditText
 import com.revolut.converter.ui.DecimalFormat
 
+/**
+ * Responsible for formatting input into the decimal format
+ */
 class BaseCurrencyTextWatcher(
     private val editText: EditText,
     private val afterTextChanged: (String) -> Unit

@@ -7,6 +7,12 @@ import com.revolut.converter.domain.repository.ConverterRepository
 import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * Fetches latest currency rates from local or remote data source
+ *
+ * Uses local source (memory) if it has actual data and force reload
+ * is not specified explicitly
+ */
 class ConverterRepositoryImpl @Inject constructor(
     private val converterRemoteSource: ConverterRemoteSource,
     private val converterLocalSource: ConverterLocalSource

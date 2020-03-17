@@ -7,6 +7,9 @@ import com.revolut.converter.domain.entity.ExchangeRates
 import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * Responsible for network interactions and handling api response
+ */
 class ConverterRemoteSourceImpl @Inject constructor(
     private val converterApi: ConverterApi,
     private val apiHandler: ApiHandler,

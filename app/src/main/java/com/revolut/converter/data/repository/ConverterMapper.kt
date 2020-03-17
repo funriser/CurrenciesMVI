@@ -5,6 +5,9 @@ import com.revolut.converter.data.dto.CurrencyRatesDto
 import com.revolut.converter.domain.entity.*
 import javax.inject.Inject
 
+/**
+ * Maps DTOs from data sources to business entities
+ */
 class ConverterMapper @Inject constructor() {
 
     fun getExchangeRates(ratesDto: CurrencyRatesDto): ExchangeRates {

@@ -17,6 +17,7 @@ class ConverterViewModel @Inject constructor(
     private val errorHandler: ErrorHandler
 ) : ViewModel() {
 
+    //holds params of the last requested exchange
     var converterState = ConverterState("EUR", "100")
 
     private val compositeDisposable = CompositeDisposable()
@@ -30,6 +31,7 @@ class ConverterViewModel @Inject constructor(
     }
 
     fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String) {
+        //get pure string to keep locale-independent value
         val pureDecimalAmount = DecimalFormat.getPureDecimalString(amount)
         val newState = ConverterState(currency.currency.code, pureDecimalAmount)
         receiveCurrencyUpdates(newState)
@@ -58,7 +60,6 @@ class ConverterViewModel @Inject constructor(
     }
 
     private fun onGetCurrenciesError(e: Throwable) {
-        e.printStackTrace()
         _failure.value = e
     }
 

@@ -14,6 +14,15 @@ import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * Gets currency rates from repository and performs exchange
+ *
+ *  Exchange operation:
+ *      Take base currency and amount we want to sell
+ *      Get latest rates for base currency
+ *      Calculate purchase amount for each currency using its rate
+ *      Schedule updates to keep data actualized
+ */
 class GetConvertedCurrencies @Inject constructor(
     executor: Executor,
     private val repository: ConverterRepository
@@ -29,6 +38,16 @@ class GetConvertedCurrencies @Inject constructor(
             .subscribeOn(executor.workScheduler)
     }
 
+    /**
+     * Performs currency exchange
+     *
+     * @param params holds base currency and amount to sell
+     * @param exchangeRates latest currency rates
+     *
+     * @return currencies with calculated purchase price
+     * First element in list describes basic currency
+     * Other elements are for currencies we can purchase
+     */
     private fun exchangeCurrencies(
         params: Params,
         exchangeRates: ExchangeRates

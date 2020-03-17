@@ -5,6 +5,9 @@ import com.revolut.converter.domain.entity.ExchangeRates
 import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * Responsible for accessing in-memory cache
+ */
 class ConverterLocalSourceImpl @Inject constructor(
     private val currencyHolder: CurrencyHolder
 ): ConverterLocalSource {

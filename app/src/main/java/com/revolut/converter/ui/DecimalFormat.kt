@@ -4,6 +4,11 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
+/**
+ * Responsible for formatting decimal values
+ *
+ * Holds separators used with the current locale
+ */
 object DecimalFormat {
 
     private var symbolsFormat = DecimalFormatSymbols.getInstance()
@@ -53,11 +58,17 @@ object DecimalFormat {
         return toDecimalString(decimalFormat.format(amount), cutFractionZero)
     }
 
+    /**
+     * @return locale-free decimal that could be accepted by @BigDecimal constructor
+     */
     fun getPureDecimalString(s: String): String {
         return s.replace(GROUP_SIGN.toString(), "")
             .replace(FRACTION_SIGN.toString(), ".")
     }
 
+    /**
+     * Updates separating characters to match current locale
+     */
     fun updateConfig() {
         symbolsFormat = DecimalFormatSymbols.getInstance()
         decimalFormat = DecimalFormat.getInstance()
