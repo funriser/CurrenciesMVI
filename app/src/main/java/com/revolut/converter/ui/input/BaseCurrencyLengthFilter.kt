@@ -8,7 +8,7 @@ import com.revolut.converter.ui.DecimalFormat.DIGITS
 class BaseCurrencyLengthFilter : InputFilter {
 
     companion object {
-        private const val DIGITS_LIMIT = 9
+        private const val DIGITS_LIMIT = 8
         private const val FRACTION_LIMIT = 2
     }
 
@@ -100,11 +100,10 @@ class BaseCurrencyLengthFilter : InputFilter {
     ): Boolean {
         val isDeleteIntent = start == 0 && end == 0 && source.toString() == ""
         val isDeletingLastSymbol = (dend - dstart) == dest.length
-        val clearedDest = dest.removeRange(dstart until dend)
-        val isDeletingLastFraction =
-            clearedDest.toString() == DecimalFormat.FRACTION_SIGN.toString()
+        val clearedDest = dest.removeRange(dstart until dend).toString()
+        val isDeletingLastFraction = clearedDest == DecimalFormat.FRACTION_SIGN.toString()
         return (isDeleteIntent && (isDeletingLastSymbol || isDeletingLastFraction)) ||
-                isDeletingLastSymbol && source == DecimalFormat.FRACTION_SIGN.toString()
+                isDeletingLastSymbol && source.length == 1 && !DIGITS.contains(source)
     }
 
     private fun isKeyInputIntent(dest: Spanned, source: CharSequence): Boolean {
