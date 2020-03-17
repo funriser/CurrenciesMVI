@@ -4,6 +4,7 @@ import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.converter.R
@@ -126,6 +127,11 @@ class CurrencyAdapter(
 
         fun bindAmount(newAmount: BigDecimal) {
             val amountStr = DecimalFormat.toDecimalString(newAmount, true)
+            if (amountStr == "0") {
+                setLightAmountColor()
+            } else {
+                setPrimaryAmountColor()
+            }
             itemView.edAmount.setText(amountStr)
         }
 
@@ -141,6 +147,7 @@ class CurrencyAdapter(
             viewModel: ConverterViewModel,
             currency: ConvertedCurrency
         ) {
+            setPrimaryAmountColor()
             textWatcher = BaseCurrencyTextWatcher(itemView.edAmount) {
                 onNewExchangeAmount(viewModel, currency)
             }
@@ -155,6 +162,16 @@ class CurrencyAdapter(
                 itemView.edAmount.removeTextChangedListener(it)
             }
             itemView.edAmount.filters = arrayOf()
+        }
+
+        private fun setPrimaryAmountColor() {
+            val textColor = ContextCompat.getColor(itemView.context, R.color.colorBlack)
+            itemView.edAmount.setTextColor(textColor)
+        }
+
+        private fun setLightAmountColor() {
+            val textColor = ContextCompat.getColor(itemView.context, R.color.colorGreyLight)
+            itemView.edAmount.setTextColor(textColor)
         }
 
     }

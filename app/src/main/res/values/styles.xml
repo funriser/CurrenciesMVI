@@ -33,9 +33,14 @@
         <item name="android:textAppearance">@style/TextAppearance.Headline</item>
     </style>
     
-    <style name="Edit.Amount" parent="">
+    <style name="Edit.Amount" parent="Widget.AppCompat.EditText">
         <item name="android:textAppearance">@style/TextAppearance.Headline</item>
         <item name="android:inputType">numberDecimal</item>
+    </style>
+
+    <style name="EditTheme" parent="">
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorGreyLight</item>
     </style>
 
 </resources>
