@@ -6,13 +6,16 @@ import java.text.DecimalFormatSymbols
 
 object DecimalFormat {
 
-    private val symbolsFormat = DecimalFormatSymbols.getInstance()
-    private val decimalFormat = DecimalFormat.getInstance()
+    private var symbolsFormat = DecimalFormatSymbols.getInstance()
+    private var decimalFormat = DecimalFormat.getInstance()
 
     const val DIGITS = "0123456789"
-    val FRACTION_SIGN = symbolsFormat.decimalSeparator
-    val GROUP_SIGN = symbolsFormat.groupingSeparator
-    val ACCEPTED_INPUT = DIGITS + FRACTION_SIGN
+    val FRACTION_SIGN
+        get() = symbolsFormat.decimalSeparator
+    val GROUP_SIGN
+        get() = symbolsFormat.groupingSeparator
+    val ACCEPTED_INPUT
+        get() = DIGITS + FRACTION_SIGN
 
     fun toDecimalString(source: String, cutFractionZero: Boolean = false): String {
         val fractionalSignInd = source.indexOf(FRACTION_SIGN)
@@ -50,10 +53,14 @@ object DecimalFormat {
         return toDecimalString(decimalFormat.format(amount), cutFractionZero)
     }
 
-    fun fromDecimalString(s: String): BigDecimal {
-        val pureStr = s.replace(GROUP_SIGN.toString(), "")
+    fun getPureDecimalString(s: String): String {
+        return s.replace(GROUP_SIGN.toString(), "")
             .replace(FRACTION_SIGN.toString(), ".")
-        return pureStr.toBigDecimal()
+    }
+
+    fun updateConfig() {
+        symbolsFormat = DecimalFormatSymbols.getInstance()
+        decimalFormat = DecimalFormat.getInstance()
     }
 
 }

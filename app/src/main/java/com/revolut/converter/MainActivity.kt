@@ -13,6 +13,7 @@ import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.ConverterState
 import com.revolut.converter.ui.ConverterViewModel
 import com.revolut.converter.ui.CurrencyAdapter
+import com.revolut.converter.ui.DecimalFormat
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        DecimalFormat.updateConfig()
 
         App.appComponent
             .converterComponent()

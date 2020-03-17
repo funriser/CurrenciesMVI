@@ -30,7 +30,8 @@ class ConverterViewModel @Inject constructor(
     }
 
     fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String) {
-        val newState = ConverterState(currency.currency.code, amount)
+        val pureDecimalAmount = DecimalFormat.getPureDecimalString(amount)
+        val newState = ConverterState(currency.currency.code, pureDecimalAmount)
         receiveCurrencyUpdates(newState)
     }
 
@@ -38,8 +39,10 @@ class ConverterViewModel @Inject constructor(
         if (state != null) {
             converterState = state
         }
-        val exchangeAmount = DecimalFormat.fromDecimalString(converterState.amount)
-        val params = GetConvertedCurrencies.Params(converterState.baseCurrency, exchangeAmount)
+        val params = GetConvertedCurrencies.Params(
+            converterState.baseCurrency,
+            converterState.amount.toBigDecimal()
+        )
         compositeDisposable.clear()
         compositeDisposable += getConvertedCurrencies.buildObservable(params)
             .observeOn(AndroidSchedulers.mainThread())
