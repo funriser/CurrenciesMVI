@@ -1,26 +1,30 @@
 package com.revolut.converter.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.App
 import com.revolut.converter.R
-import com.revolut.converter.core.observe
-import com.revolut.converter.core.viewModel
 import com.revolut.converter.core.di.ViewModelFactory
-import com.revolut.converter.domain.entity.ConvertedCurrency
+import com.revolut.converter.core.ui.BaseActivity
+import com.revolut.converter.ui.mvi.ConverterViewModel
+import com.revolut.converter.ui.mvi.ConverterViewState
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class ConverterActivity : AppCompatActivity() {
+class ConverterActivity : BaseActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: ConverterViewModel
     private lateinit var currencyAdapter: CurrencyAdapter
+
+    private val currenciesDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,26 +35,13 @@ class ConverterActivity : AppCompatActivity() {
             .converterComponent()
             .inject(this)
 
-        viewModel = viewModel(viewModelFactory) {
-            observe(rates, ::renderCurrencies)
-            observe(failure, ::renderFailure)
-        }
+        viewModel = ViewModelProvider(this, viewModelFactory)[ConverterViewModel::class.java]
 
         savedInstanceState?.getParcelable<ConverterState>(KEY_CONVERTER_STATE)?.let {
             viewModel.converterState = it
         }
 
         initView()
-    }
-
-    override fun onStart() {
-        viewModel.receiveCurrencyUpdates()
-        super.onStart()
-    }
-
-    override fun onStop() {
-        viewModel.stopReceivingCurrencyUpdates()
-        super.onStop()
     }
 
     private fun initView() {
@@ -64,33 +55,58 @@ class ConverterActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        viewModel.onAttach(firstStart)
+        observeCurrencies()
+        super.onStart()
+    }
+
+    private fun observeCurrencies() {
+        currenciesDisposable += viewModel.observeViewState()
+            .subscribe(::renderUi)
+    }
+
+    private fun stopObservingCurrencies() {
+        currenciesDisposable.clear()
+    }
+
+    private fun renderUi(state: ConverterViewState) {
+        renderCurrencies(state)
+        renderFailure(state)
+    }
+
+    private fun renderCurrencies(state: ConverterViewState) {
+        if (state.items.isNotEmpty()) {
+            currencyAdapter.setItems(state.items)
+        }
+    }
+
+    private fun renderFailure(state: ConverterViewState) {
+        if (state.error.isNotEmpty()) {
+            Snackbar
+                .make(rvCurrencyRates, state.error, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.error_try_again) {
+                    viewModel.receiveCurrencyUpdates()
+                }
+                .show()
+        }
+    }
+
     private fun getOnScrollListener(): RecyclerView.OnScrollListener {
         return object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (rvCurrencyRates.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
-                    //suspend update receiving on scrolling to increase performance
-                    if (viewModel.rates.hasObservers()) {
-                        viewModel.rates.removeObservers(this@ConverterActivity)
-                    }
+                    stopObservingCurrencies()
                 } else {
-                    observe(viewModel.rates, ::renderCurrencies)
+                    observeCurrencies()
                 }
             }
         }
     }
 
-    private fun renderCurrencies(rates: List<ConvertedCurrency>?) {
-        currencyAdapter.setItems(rates.orEmpty())
-    }
-
-    private fun renderFailure(msg: String?) {
-        msg?:return
-        Snackbar
-            .make(rvCurrencyRates, msg, Snackbar.LENGTH_INDEFINITE)
-            .setAction(R.string.error_try_again) {
-                viewModel.receiveCurrencyUpdates()
-            }
-            .show()
+    override fun onStop() {
+        viewModel.onDetach()
+        super.onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

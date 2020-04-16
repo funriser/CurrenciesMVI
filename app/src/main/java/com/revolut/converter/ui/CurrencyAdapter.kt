@@ -13,6 +13,7 @@ import com.revolut.converter.domain.entity.BaseConvertedCurrency
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.input.BaseCurrencyLengthFilter
 import com.revolut.converter.ui.input.BaseCurrencyTextWatcher
+import com.revolut.converter.ui.mvi.ConverterViewModel
 import kotlinx.android.synthetic.main.item_currency.view.*
 import java.math.BigDecimal
 

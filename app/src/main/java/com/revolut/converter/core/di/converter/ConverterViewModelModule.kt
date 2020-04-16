@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.revolut.converter.core.di.ViewModelFactory
 import com.revolut.converter.core.di.ViewModelKey
-import com.revolut.converter.ui.ConverterViewModel
+import com.revolut.converter.ui.mvi.ConverterViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

@@ -7,6 +7,7 @@ import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.domain.entity.ExchangeRates
 import com.revolut.converter.domain.executor.Executor
 import com.revolut.converter.domain.repository.ConverterRepository
+import com.revolut.converter.ui.mvi.ConverterAction
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -26,9 +27,9 @@ import javax.inject.Inject
 class GetConvertedCurrencies @Inject constructor(
     executor: Executor,
     private val repository: ConverterRepository
-) : UseCase<List<ConvertedCurrency>, GetConvertedCurrencies.Params>(executor) {
+) : UseCase<ConverterAction, GetConvertedCurrencies.Params>(executor) {
 
-    override fun buildObservable(params: Params): Observable<List<ConvertedCurrency>> {
+    override fun buildObservable(params: Params): Observable<ConverterAction> {
         return Observable.concat(
                 listOf(
                     getConvertedCurrencies(params, false).toObservable(),
@@ -51,7 +52,7 @@ class GetConvertedCurrencies @Inject constructor(
     private fun exchangeCurrencies(
         params: Params,
         exchangeRates: ExchangeRates
-    ): List<ConvertedCurrency> {
+    ): ConverterAction {
         val currencies = mutableListOf<ConvertedCurrency>()
         val baseCurrency = BaseConvertedCurrency(
             currency = exchangeRates.baseCurrency,
@@ -63,10 +64,11 @@ class GetConvertedCurrencies @Inject constructor(
                 amount = exchangeValue(params.amount, it.rate)
             )
         }
-        return currencies.apply {
+        currencies.apply {
             add(baseCurrency)
             addAll(convertedCurrencies)
         }
+        return ConverterAction.CurrenciesLoaded(currencies)
     }
 
     private fun exchangeValue(amount: BigDecimal, rate: BigDecimal): BigDecimal {
@@ -76,13 +78,13 @@ class GetConvertedCurrencies @Inject constructor(
     private fun getConvertedCurrencies(
         params: Params,
         forceReload: Boolean
-    ): Single<List<ConvertedCurrency>> {
+    ): Single<ConverterAction> {
         return repository.getLatestRates(params.baseCurrency, forceReload).map { rates ->
             exchangeCurrencies(params, rates)
         }
     }
 
-    private fun scheduleRateUpdates(params: Params): Observable<List<ConvertedCurrency>> {
+    private fun scheduleRateUpdates(params: Params): Observable<ConverterAction> {
         return if (params.amount == BigDecimal.ZERO) {
             //no need to schedule update when input is null
             Observable.empty()
