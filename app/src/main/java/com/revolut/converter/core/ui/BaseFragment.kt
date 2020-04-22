@@ -1,14 +1,28 @@
 package com.revolut.converter.core.ui
 
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseFragment: Fragment() {
+
+    abstract var layoutId: Int
 
     private val stopCompositeDisposable: CompositeDisposable = CompositeDisposable()
     private val onErrorHandler: (Throwable) -> Unit by lazy {
         { throwable: Throwable -> throwable.printStackTrace() }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(layoutId, container, false)
     }
 
     protected fun <T> Observable<T>.subscribeTillStop(onSuccess: (T) -> Unit = {}) {

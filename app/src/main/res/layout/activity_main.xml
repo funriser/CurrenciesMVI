@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navHost"
+    android:name="androidx.navigation.fragment.NavHostFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.ConverterActivity">
-
-    <TextView
-        android:id="@+id/tvTitle"
-        style="@style/Text.Toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/marginToolbar"
-        android:text="@string/app_name" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCurrencyRates"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/marginL" />
-
-</LinearLayout>
+    app:defaultNavHost="true"
+    app:navGraph="@navigation/nav_graph" />

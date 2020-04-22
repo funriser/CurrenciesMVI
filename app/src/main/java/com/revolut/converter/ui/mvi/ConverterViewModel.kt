@@ -33,7 +33,7 @@ class ConverterViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun onAttach(firstStart: Boolean) {
+    fun onAttach() {
         actionsDisposable = store.bind(uiActions.hide())
         receiveCurrencyUpdates()
     }

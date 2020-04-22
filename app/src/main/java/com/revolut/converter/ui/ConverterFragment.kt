@@ -9,15 +9,17 @@ import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.App
 import com.revolut.converter.R
 import com.revolut.converter.core.di.ViewModelFactory
-import com.revolut.converter.core.ui.BaseActivity
+import com.revolut.converter.core.ui.BaseFragment
 import com.revolut.converter.ui.mvi.ConverterViewModel
 import com.revolut.converter.ui.mvi.ConverterViewState
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_currencies.*
 import javax.inject.Inject
 
-class ConverterActivity : BaseActivity() {
+class ConverterFragment : BaseFragment() {
+
+    override var layoutId: Int = R.layout.fragment_currencies
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
 
@@ -28,7 +30,6 @@ class ConverterActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         DecimalFormat.updateConfig()
 
         App.appComponent
@@ -40,7 +41,10 @@ class ConverterActivity : BaseActivity() {
         savedInstanceState?.getParcelable<ConverterState>(KEY_CONVERTER_STATE)?.let {
             viewModel.converterState = it
         }
+    }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         initView()
     }
 
@@ -48,7 +52,7 @@ class ConverterActivity : BaseActivity() {
         currencyAdapter = CurrencyAdapter(viewModel)
         val scrollListener = getOnScrollListener()
         rvCurrencyRates.apply {
-            layoutManager = LinearLayoutManager(this@ConverterActivity)
+            layoutManager = LinearLayoutManager(requireActivity())
             itemAnimator = DefaultItemAnimator()
             adapter = currencyAdapter
             addOnScrollListener(scrollListener)
@@ -56,7 +60,7 @@ class ConverterActivity : BaseActivity() {
     }
 
     override fun onStart() {
-        viewModel.onAttach(firstStart)
+        viewModel.onAttach()
         observeCurrencies()
         super.onStart()
     }
