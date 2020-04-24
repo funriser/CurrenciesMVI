@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.ConverterFragment">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        style="@style/Text.Toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/marginToolbar"
-        android:text="@string/app_name" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCurrencyRates"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/marginL" />
+        android:orientation="vertical"
+        tools:context=".ui.ConverterFragment">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/Text.Toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/marginToolbar"
+            android:text="@string/app_name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCurrencyRates"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/marginL" />
+
+    </LinearLayout>
+
+    <Button
+        style="@style/Button.Main"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/marginL"
+        android:backgroundTint="@color/colorAccent"
+        android:text="@string/rates_exchange"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

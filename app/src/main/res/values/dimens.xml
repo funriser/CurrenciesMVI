@@ -5,4 +5,9 @@
     <dimen name="marginToolbar">72dp</dimen>
     <dimen name="textHeadline">20sp</dimen>
     <dimen name="img_size">40dp</dimen>
+
+    <dimen name="button_main_corner_size">20dp</dimen>
+    <dimen name="button_main_height">55dp</dimen>
+    <dimen name="button_main_width">270dp</dimen>
+
 </resources>
