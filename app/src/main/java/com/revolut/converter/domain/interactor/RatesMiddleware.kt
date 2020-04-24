@@ -1,33 +1,33 @@
 package com.revolut.converter.domain.interactor
 
 import com.revolut.converter.core.mvi.MiddleWare
-import com.revolut.converter.ui.mvi.ConverterAction
-import com.revolut.converter.ui.mvi.ConverterViewState
+import com.revolut.converter.ui.rates.mvi.RatesAction
+import com.revolut.converter.ui.rates.mvi.RatesViewState
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class ConverterMiddleware @Inject constructor(
+class RatesMiddleware @Inject constructor(
     private val getConvertedCurrencies: GetConvertedCurrencies
-): MiddleWare<ConverterAction, ConverterViewState>() {
+): MiddleWare<RatesAction, RatesViewState>() {
 
-    override fun bind(actionStream: Observable<ConverterAction>): Observable<ConverterAction> {
+    override fun bind(actionStream: Observable<RatesAction>): Observable<RatesAction> {
         return actionStream
             .filter(::isHandled)
             .switchMap {
                 when (it) {
-                    is ConverterAction.ObserveCurrency -> {
+                    is RatesAction.ObserveCurrency -> {
                         val params = GetConvertedCurrencies.Params(it.baseCurrency, it.amount)
                         getConvertedCurrencies.buildObservable(params)
-                            .onErrorReturn { t -> ConverterAction.CurrenciesError(t) }
-                            .startWith(ConverterAction.Loading)
+                            .onErrorReturn { t -> RatesAction.CurrenciesError(t) }
+                            .startWith(RatesAction.Loading)
                     }
                     else -> throw IllegalStateException("Action cannot be processed")
                 }
             }
     }
 
-    private fun isHandled(action: ConverterAction): Boolean {
-        return action is ConverterAction.ObserveCurrency
+    private fun isHandled(action: RatesAction): Boolean {
+        return action is RatesAction.ObserveCurrency
     }
 
 }

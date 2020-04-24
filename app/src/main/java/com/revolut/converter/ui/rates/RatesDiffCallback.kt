@@ -1,10 +1,10 @@
-package com.revolut.converter.ui
+package com.revolut.converter.ui.rates
 
 import androidx.recyclerview.widget.DiffUtil
 import com.revolut.converter.domain.entity.BaseConvertedCurrency
 import com.revolut.converter.domain.entity.ConvertedCurrency
 
-class CurrencyDiffCallback(
+class RatesDiffCallback(
     private val oldList: List<ConvertedCurrency>,
     private val newList: List<ConvertedCurrency>
 ): DiffUtil.Callback() {
@@ -40,9 +40,9 @@ class CurrencyDiffCallback(
         val oldItem = oldList[oldItemPosition]
         val newItem = newList[newItemPosition]
         return if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
-            CurrencyAdapter.PAYLOAD_CURRENCY
+            RatesAdapter.PAYLOAD_CURRENCY
         } else if (oldItem !is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
-            CurrencyAdapter.PAYLOAD_NEW_BASIC
+            RatesAdapter.PAYLOAD_NEW_BASIC
         } else {
             null
         }

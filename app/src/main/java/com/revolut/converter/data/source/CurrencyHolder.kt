@@ -1,10 +1,10 @@
 package com.revolut.converter.data.source
 
-import com.revolut.converter.core.di.converter.ConverterScope
+import com.revolut.converter.core.di.rates.RatesScope
 import com.revolut.converter.domain.entity.ExchangeRates
 import javax.inject.Inject
 
-@ConverterScope
+@RatesScope
 class CurrencyHolder @Inject constructor() {
 
     var currentRates: ExchangeRates? = null

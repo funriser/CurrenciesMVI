@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/converterFragment"
-        android:name="com.revolut.converter.ui.ConverterFragment"
+        android:name="com.revolut.converter.ui.rates.RatesFragment"
         android:label="ConverterFragment" />
 
 </navigation>

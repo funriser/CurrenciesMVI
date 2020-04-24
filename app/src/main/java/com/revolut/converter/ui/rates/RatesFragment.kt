@@ -1,4 +1,4 @@
-package com.revolut.converter.ui
+package com.revolut.converter.ui.rates
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
@@ -8,23 +8,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.App
 import com.revolut.converter.R
-import com.revolut.converter.core.di.ViewModelFactory
 import com.revolut.converter.core.ui.BaseFragment
-import com.revolut.converter.ui.mvi.ConverterViewModel
-import com.revolut.converter.ui.mvi.ConverterViewState
+import com.revolut.converter.ui.DecimalFormat
+import com.revolut.converter.ui.rates.mvi.RatesViewModel
+import com.revolut.converter.ui.rates.mvi.RatesViewState
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_currencies.*
 import javax.inject.Inject
 
-class ConverterFragment : BaseFragment() {
+class RatesFragment : BaseFragment() {
 
     override var layoutId: Int = R.layout.fragment_currencies
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: ConverterViewModel
-    private lateinit var currencyAdapter: CurrencyAdapter
+    private lateinit var viewModel: RatesViewModel
+    private lateinit var ratesAdapter: RatesAdapter
 
     private val currenciesDisposable = CompositeDisposable()
 
@@ -33,14 +33,17 @@ class ConverterFragment : BaseFragment() {
         DecimalFormat.updateConfig()
 
         App.appComponent
-            .converterComponent()
+            .ratesComponentBuilder()
+            .ratesState(getRatesState(savedInstanceState))
+            .build()
             .inject(this)
 
-        viewModel = ViewModelProvider(this, viewModelFactory)[ConverterViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[RatesViewModel::class.java]
+    }
 
-        savedInstanceState?.getParcelable<ConverterState>(KEY_CONVERTER_STATE)?.let {
-            viewModel.converterState = it
-        }
+    private fun getRatesState(savedInstanceState: Bundle?): RatesState {
+        val restoredState = savedInstanceState?.getParcelable<RatesState>(KEY_CONVERTER_STATE)
+        return restoredState?:RatesViewModel.initialState
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -49,12 +52,12 @@ class ConverterFragment : BaseFragment() {
     }
 
     private fun initView() {
-        currencyAdapter = CurrencyAdapter(viewModel)
+        ratesAdapter = RatesAdapter(viewModel)
         val scrollListener = getOnScrollListener()
         rvCurrencyRates.apply {
             layoutManager = LinearLayoutManager(requireActivity())
             itemAnimator = DefaultItemAnimator()
-            adapter = currencyAdapter
+            adapter = ratesAdapter
             addOnScrollListener(scrollListener)
         }
     }
@@ -74,18 +77,18 @@ class ConverterFragment : BaseFragment() {
         currenciesDisposable.clear()
     }
 
-    private fun renderUi(state: ConverterViewState) {
+    private fun renderUi(state: RatesViewState) {
         renderCurrencies(state)
         renderFailure(state)
     }
 
-    private fun renderCurrencies(state: ConverterViewState) {
+    private fun renderCurrencies(state: RatesViewState) {
         if (state.items.isNotEmpty()) {
-            currencyAdapter.setItems(state.items)
+            ratesAdapter.setItems(state.items)
         }
     }
 
-    private fun renderFailure(state: ConverterViewState) {
+    private fun renderFailure(state: RatesViewState) {
         if (state.error.isNotEmpty()) {
             Snackbar
                 .make(rvCurrencyRates, state.error, Snackbar.LENGTH_INDEFINITE)

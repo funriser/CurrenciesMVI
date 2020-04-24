@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ui.ConverterFragment">
+        tools:context=".ui.rates.RatesFragment">
 
         <TextView
             android:id="@+id/tvTitle"

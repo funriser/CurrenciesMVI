@@ -1,4 +1,4 @@
-package com.revolut.converter.ui
+package com.revolut.converter.ui.rates
 
 import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
@@ -11,15 +11,16 @@ import com.revolut.converter.R
 import com.revolut.converter.core.inflate
 import com.revolut.converter.domain.entity.BaseConvertedCurrency
 import com.revolut.converter.domain.entity.ConvertedCurrency
+import com.revolut.converter.ui.DecimalFormat
 import com.revolut.converter.ui.input.BaseCurrencyLengthFilter
 import com.revolut.converter.ui.input.BaseCurrencyTextWatcher
-import com.revolut.converter.ui.mvi.ConverterViewModel
+import com.revolut.converter.ui.rates.mvi.RatesViewModel
 import kotlinx.android.synthetic.main.item_currency.view.*
 import java.math.BigDecimal
 
-class CurrencyAdapter(
-    private val viewModel: ConverterViewModel
-) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
+class RatesAdapter(
+    private val viewModel: RatesViewModel
+) : RecyclerView.Adapter<RatesAdapter.ViewHolder>() {
 
     companion object {
         const val PAYLOAD_CURRENCY = 16
@@ -30,7 +31,11 @@ class CurrencyAdapter(
         private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.item_currency))
+        return ViewHolder(
+            parent.inflate(
+                R.layout.item_currency
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -59,7 +64,12 @@ class CurrencyAdapter(
     }
 
     fun setItems(currencies: List<ConvertedCurrency>) {
-        val diff = DiffUtil.calculateDiff(CurrencyDiffCallback(items, currencies))
+        val diff = DiffUtil.calculateDiff(
+            RatesDiffCallback(
+                items,
+                currencies
+            )
+        )
         items = currencies
         diff.dispatchUpdatesTo(this)
     }
@@ -68,7 +78,7 @@ class CurrencyAdapter(
 
         private var textWatcher: TextWatcher? = null
 
-        fun bind(viewModel: ConverterViewModel, currency: ConvertedCurrency) {
+        fun bind(viewModel: RatesViewModel, currency: ConvertedCurrency) {
             releaseBaseCurrencyInput()
             bindCurrency(currency)
             bindAmount(currency.amount)
@@ -102,7 +112,7 @@ class CurrencyAdapter(
         /**
          * Performs binding related only to base currency
          */
-        fun bindBaseCurrency(viewModel: ConverterViewModel, convertedCurrency: ConvertedCurrency) {
+        fun bindBaseCurrency(viewModel: RatesViewModel, convertedCurrency: ConvertedCurrency) {
             itemView.setOnClickListener(null)
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
@@ -118,7 +128,7 @@ class CurrencyAdapter(
          * Performs binding related only to currencies that show rates
          */
         private fun bindExchangeCurrency(
-            viewModel: ConverterViewModel,
+            viewModel: RatesViewModel,
             convertedCurrency: ConvertedCurrency
         ) {
             itemView.setOnClickListener {
@@ -141,7 +151,11 @@ class CurrencyAdapter(
          * Just binds total amount for currency
          */
         fun bindAmount(newAmount: BigDecimal) {
-            val amountStr = DecimalFormat.toDecimalString(newAmount, true)
+            val amountStr =
+                DecimalFormat.toDecimalString(
+                    newAmount,
+                    true
+                )
             if (amountStr == "0") {
                 setLightAmountColor()
             } else {
@@ -151,7 +165,7 @@ class CurrencyAdapter(
         }
 
         private fun onNewExchangeAmount(
-            viewModel: ConverterViewModel,
+            viewModel: RatesViewModel,
             convertedCurrency: ConvertedCurrency
         ) {
             val input = itemView.edAmount.text.toString()
@@ -159,7 +173,7 @@ class CurrencyAdapter(
         }
 
         private fun setUpBaseCurrencyInput(
-            viewModel: ConverterViewModel,
+            viewModel: RatesViewModel,
             currency: ConvertedCurrency
         ) {
             setPrimaryAmountColor()

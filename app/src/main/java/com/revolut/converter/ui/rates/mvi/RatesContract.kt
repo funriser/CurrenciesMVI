@@ -1,18 +1,18 @@
-package com.revolut.converter.ui.mvi
+package com.revolut.converter.ui.rates.mvi
 
 import com.revolut.converter.core.mvi.Action
 import com.revolut.converter.core.mvi.ViewState
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import java.math.BigDecimal
 
-sealed class ConverterAction: Action {
-    class ObserveCurrency(val baseCurrency: String, val amount: BigDecimal): ConverterAction()
-    class CurrenciesLoaded(val items: List<ConvertedCurrency>): ConverterAction()
-    class CurrenciesError(val throwable: Throwable): ConverterAction()
-    object Loading: ConverterAction()
+sealed class RatesAction: Action {
+    class ObserveCurrency(val baseCurrency: String, val amount: BigDecimal): RatesAction()
+    class CurrenciesLoaded(val items: List<ConvertedCurrency>): RatesAction()
+    class CurrenciesError(val throwable: Throwable): RatesAction()
+    object Loading: RatesAction()
 }
 
-data class ConverterViewState(
+data class RatesViewState(
     val items: List<ConvertedCurrency>,
     val isLoading: Boolean,
     val error: String
@@ -20,32 +20,32 @@ data class ConverterViewState(
 
     companion object {
 
-        fun createEmpty(): ConverterViewState {
-            return ConverterViewState(
+        fun createEmpty(): RatesViewState {
+            return RatesViewState(
                 items = emptyList(),
                 isLoading = false,
                 error = ""
             )
         }
 
-        fun createLoadingState(): ConverterViewState {
-            return ConverterViewState(
+        fun createLoadingState(): RatesViewState {
+            return RatesViewState(
                 items = emptyList(),
                 isLoading = true,
                 error = ""
             )
         }
 
-        fun createCurrenciesReceived(items: List<ConvertedCurrency>): ConverterViewState {
-            return ConverterViewState(
+        fun createCurrenciesReceived(items: List<ConvertedCurrency>): RatesViewState {
+            return RatesViewState(
                 items = items,
                 isLoading = false,
                 error = ""
             )
         }
 
-        fun createErrorState(error: String): ConverterViewState {
-            return ConverterViewState(
+        fun createErrorState(error: String): RatesViewState {
+            return RatesViewState(
                 items = emptyList(),
                 isLoading = true,
                 error = error
