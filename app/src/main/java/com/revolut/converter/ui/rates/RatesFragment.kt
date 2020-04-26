@@ -2,6 +2,7 @@ package com.revolut.converter.ui.rates
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,6 +60,9 @@ class RatesFragment : BaseFragment() {
             itemAnimator = DefaultItemAnimator()
             adapter = ratesAdapter
             addOnScrollListener(scrollListener)
+        }
+        btnToExchange.setOnClickListener {
+            findNavController().navigate(R.id.toExchange)
         }
     }
 
@@ -119,6 +123,11 @@ class RatesFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(KEY_CONVERTER_STATE, viewModel.converterState)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        rvCurrencyRates.clearOnScrollListeners()
+        super.onDestroyView()
     }
 
     companion object {

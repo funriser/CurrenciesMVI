@@ -57,4 +57,9 @@
         <item name="cornerSize">@dimen/button_main_corner_size</item>
     </style>
 
+    <style name="Button.Back" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:src">@drawable/ic_chevron_left</item>
+    </style>
+
 </resources>

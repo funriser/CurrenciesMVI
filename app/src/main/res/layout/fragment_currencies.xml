@@ -28,6 +28,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btnToExchange"
         style="@style/Button.Main"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="@dimen/marginL"
