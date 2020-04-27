@@ -1,15 +1,18 @@
 package com.revolut.converter.domain.entity
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
 
 /**
  * Data class that holds currency description
  */
+@Parcelize
 data class Currency(
     val code: String,
     val name: String,
     val image: Int
-)
+): Parcelable
 
 /**
  * Specifies exchange rate for currency

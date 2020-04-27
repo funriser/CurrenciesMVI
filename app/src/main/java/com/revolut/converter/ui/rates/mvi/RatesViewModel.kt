@@ -2,9 +2,12 @@ package com.revolut.converter.ui.rates.mvi
 
 import androidx.lifecycle.ViewModel
 import com.revolut.converter.core.mvi.Store
+import com.revolut.converter.core.navigation.ToExchange
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.rates.RatesState
 import com.revolut.converter.ui.DecimalFormat
+import com.revolut.converter.ui.exchange.ExchangeInput
+import com.revolut.converter.ui.exchange.ExchangeState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -26,6 +29,8 @@ class RatesViewModel @Inject constructor(
     private var actionsDisposable: Disposable = Disposables.empty()
     private var wiringDisposable: Disposable = Disposables.empty()
 
+    private val singleActions = PublishSubject.create<RatesSingleAction>()
+
     //holds params of the last requested exchange
     var converterState = initialState
 
@@ -36,6 +41,11 @@ class RatesViewModel @Inject constructor(
     fun observeViewState(): Observable<RatesViewState> {
         return store.observeViewState()
             .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun observeSingleActions(): Observable<RatesSingleAction> {
+        return singleActions.hide()
             .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -66,8 +76,25 @@ class RatesViewModel @Inject constructor(
         postAction(action)
     }
 
+    fun onCurrencySelected(
+        baseCurrency: ConvertedCurrency,
+        exchangeTo: ConvertedCurrency
+    ) {
+        val navAction = ToExchange(
+            args = ExchangeState(
+                from = ExchangeInput.fromConvertedCurrency(baseCurrency),
+                to = ExchangeInput.fromConvertedCurrency(exchangeTo)
+            )
+        )
+        postSingleAction(navAction)
+    }
+
     private fun postAction(action: RatesAction) {
         uiActions.onNext(action)
+    }
+
+    private fun postSingleAction(action: RatesSingleAction) {
+        singleActions.onNext(action)
     }
 
     fun onDetach() {

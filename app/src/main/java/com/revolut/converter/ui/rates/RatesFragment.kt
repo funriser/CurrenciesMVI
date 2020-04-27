@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.App
 import com.revolut.converter.R
+import com.revolut.converter.core.navigation.RatesNavigator
 import com.revolut.converter.core.ui.BaseFragment
 import com.revolut.converter.ui.DecimalFormat
+import com.revolut.converter.ui.rates.mvi.RatesSingleAction
 import com.revolut.converter.ui.rates.mvi.RatesViewModel
 import com.revolut.converter.ui.rates.mvi.RatesViewState
 import io.reactivex.disposables.CompositeDisposable
@@ -23,6 +25,7 @@ class RatesFragment : BaseFragment() {
     override var layoutId: Int = R.layout.fragment_currencies
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var navigator: RatesNavigator
 
     private lateinit var viewModel: RatesViewModel
     private lateinit var ratesAdapter: RatesAdapter
@@ -62,13 +65,16 @@ class RatesFragment : BaseFragment() {
             addOnScrollListener(scrollListener)
         }
         btnToExchange.setOnClickListener {
-            findNavController().navigate(R.id.toExchange)
+
         }
     }
 
     override fun onStart() {
         viewModel.onAttach()
         observeCurrencies()
+        viewModel
+            .observeSingleActions()
+            .subscribeTillStop(::consumeSingleAction)
         super.onStart()
     }
 
@@ -100,6 +106,13 @@ class RatesFragment : BaseFragment() {
                     viewModel.receiveCurrencyUpdates()
                 }
                 .show()
+        }
+    }
+
+    private fun consumeSingleAction(action: RatesSingleAction) {
+        if (action is RatesSingleAction.RatesNavAction) {
+            navigator.handleAction(findNavController(), action)
+            return
         }
     }
 

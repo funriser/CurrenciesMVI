@@ -20,6 +20,10 @@
     <fragment
         android:id="@+id/exchangeFragment"
         android:name="com.revolut.converter.ui.exchange.ExchangeFragment"
-        android:label="ExchangeFragment" />
+        android:label="ExchangeFragment" >
+        <argument
+            android:name="exchangeState"
+            app:argType="com.revolut.converter.ui.exchange.ExchangeState" />
+    </fragment>
 
 </navigation>

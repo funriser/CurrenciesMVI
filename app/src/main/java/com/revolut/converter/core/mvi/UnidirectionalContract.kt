@@ -14,6 +14,8 @@ interface ViewState
 
 interface Action
 
+interface SingleAction: Action
+
 
 abstract class MiddleWare<A : Action, V : ViewState> {
     abstract fun bind(actionStream: Observable<A>): Observable<A>

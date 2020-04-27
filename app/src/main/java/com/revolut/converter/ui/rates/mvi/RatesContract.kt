@@ -1,6 +1,7 @@
 package com.revolut.converter.ui.rates.mvi
 
 import com.revolut.converter.core.mvi.Action
+import com.revolut.converter.core.mvi.SingleAction
 import com.revolut.converter.core.mvi.ViewState
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import java.math.BigDecimal
@@ -10,6 +11,10 @@ sealed class RatesAction: Action {
     class CurrenciesLoaded(val items: List<ConvertedCurrency>): RatesAction()
     class CurrenciesError(val throwable: Throwable): RatesAction()
     object Loading: RatesAction()
+}
+
+sealed class RatesSingleAction: SingleAction {
+    abstract class RatesNavAction: RatesSingleAction()
 }
 
 data class RatesViewState(

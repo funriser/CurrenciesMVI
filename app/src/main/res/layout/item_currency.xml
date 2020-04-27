@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
+    android:id="@+id/layoutCurrency"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/marginLayout"
-    android:gravity="center_vertical">
-    
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/marginLayout">
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivCurrency"
         style="@style/Image.Currency"
-        android:contentDescription="@string/description_currency_img"/>
-    
+        android:contentDescription="@string/description_currency_img" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
         android:layout_marginStart="@dimen/marginL"
-        android:gravity="start">
+        android:layout_weight="1"
+        android:gravity="start"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvCurrencyTitle"
             style="@style/TextAppearance.Body1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvCurrencyCountry"
             style="@style/TextAppearance.Body2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <EditText
         android:id="@+id/edAmount"
         style="@style/Edit.Amount"
-        android:theme="@style/EditTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/EditTheme"
         tools:ignore="Autofill,LabelFor" />
-    
+
 </LinearLayout>
