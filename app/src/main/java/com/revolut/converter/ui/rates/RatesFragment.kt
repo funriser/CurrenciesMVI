@@ -94,7 +94,7 @@ class RatesFragment : BaseFragment() {
 
     private fun renderCurrencies(state: RatesViewState) {
         if (state.items.isNotEmpty()) {
-            ratesAdapter.setItems(state.items)
+            ratesAdapter.items = state.items
         }
     }
 

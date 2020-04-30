@@ -45,7 +45,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "com.google.android.material:material:1.2.0-alpha06"
 
-    def navigation_version = "2.3.0-alpha04"
+    def navigation_version = "2.3.0-alpha06"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
@@ -66,6 +66,10 @@ dependencies {
     def dagger_version = '2.26'
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
+
+    def rv_delegates_version = '4.3.0'
+    implementation "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:$rv_delegates_version"
+    implementation "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-layoutcontainer:$rv_delegates_version"
 
     implementation 'com.github.midorikocak:currency-picker-android:1.2.1'
     implementation 'de.hdodenhof:circleimageview:3.1.0'

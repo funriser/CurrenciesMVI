@@ -1,6 +1,7 @@
 package com.revolut.converter.domain.entity
 
 import android.os.Parcelable
+import com.revolut.converter.ui.delegate.CurrencyItem
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
 
@@ -39,7 +40,7 @@ data class ExchangeRates(
 open class ConvertedCurrency(
     val currency: Currency,
     val amount: BigDecimal
-)
+): CurrencyItem
 
 /**
  * Info for base currency used for exchange

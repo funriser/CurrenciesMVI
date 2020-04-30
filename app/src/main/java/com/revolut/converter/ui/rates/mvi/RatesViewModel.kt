@@ -31,6 +31,8 @@ class RatesViewModel @Inject constructor(
 
     private val singleActions = PublishSubject.create<RatesSingleAction>()
 
+    private var latestItems: List<ConvertedCurrency>? = null
+
     //holds params of the last requested exchange
     var converterState = initialState
 
@@ -40,6 +42,11 @@ class RatesViewModel @Inject constructor(
 
     fun observeViewState(): Observable<RatesViewState> {
         return store.observeViewState()
+            .doOnNext {
+                if (it.items.isNotEmpty()) {
+                    latestItems = it.items
+                }
+            }
             .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -76,14 +83,14 @@ class RatesViewModel @Inject constructor(
         postAction(action)
     }
 
-    fun onCurrencySelected(
-        baseCurrency: ConvertedCurrency,
-        exchangeTo: ConvertedCurrency
-    ) {
+    fun onCurrencySelected(position: Int) {
+        val items = latestItems?:return
+        val from = items.first()
+        val to = items[position]
         val navAction = ToExchange(
             args = ExchangeState(
-                from = ExchangeInput.fromConvertedCurrency(baseCurrency),
-                to = ExchangeInput.fromConvertedCurrency(exchangeTo)
+                from = ExchangeInput.fromConvertedCurrency(from),
+                to = ExchangeInput.fromConvertedCurrency(to)
             )
         )
         postSingleAction(navAction)

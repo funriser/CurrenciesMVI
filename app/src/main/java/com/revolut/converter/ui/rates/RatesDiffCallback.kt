@@ -1,48 +1,47 @@
 package com.revolut.converter.ui.rates
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import com.revolut.converter.domain.entity.BaseConvertedCurrency
 import com.revolut.converter.domain.entity.ConvertedCurrency
+import com.revolut.converter.ui.delegate.CurrencyDelegate
+import com.revolut.converter.ui.delegate.CurrencyItem
 
-class RatesDiffCallback(
-    private val oldList: List<ConvertedCurrency>,
-    private val newList: List<ConvertedCurrency>
-): DiffUtil.Callback() {
+class RatesDiffCallback: DiffUtil.ItemCallback<CurrencyItem>() {
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
-        return oldItem.currency.code == newItem.currency.code
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
-        return if (oldItem is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
-           true
-        } else if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
-            oldItem.currency.code == newItem.currency.code &&
-                    oldItem.amount.toString() == newItem.amount.toString()
+    override fun areItemsTheSame(oldItem: CurrencyItem, newItem: CurrencyItem): Boolean {
+        return if (oldItem is ConvertedCurrency && newItem is ConvertedCurrency) {
+            oldItem.currency.code == newItem.currency.code
         } else {
-            false
+            oldItem == newItem
         }
     }
 
-    override fun getOldListSize(): Int {
-        return oldList.size
+    @SuppressLint("DiffUtilEquals")
+    override fun areContentsTheSame(oldItem: CurrencyItem, newItem: CurrencyItem): Boolean {
+        return if (oldItem is ConvertedCurrency && newItem is ConvertedCurrency) {
+            if (oldItem is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
+                true
+            } else if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
+                oldItem.currency.code == newItem.currency.code &&
+                        oldItem.amount.toString() == newItem.amount.toString()
+            } else {
+                false
+            }
+        } else {
+            oldItem == newItem
+        }
     }
 
-    override fun getNewListSize(): Int {
-        return newList.size
-    }
-
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
-        return if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
-            RatesAdapter.PAYLOAD_CURRENCY
-        } else if (oldItem !is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
-            RatesAdapter.PAYLOAD_NEW_BASIC
+    override fun getChangePayload(oldItem: CurrencyItem, newItem: CurrencyItem): Any? {
+        return if (oldItem is ConvertedCurrency && newItem is ConvertedCurrency) {
+            if (oldItem !is BaseConvertedCurrency && newItem !is BaseConvertedCurrency) {
+                CurrencyDelegate.PAYLOAD_CURRENCY
+            } else if (oldItem !is BaseConvertedCurrency && newItem is BaseConvertedCurrency) {
+                CurrencyDelegate.PAYLOAD_NEW_BASIC
+            } else {
+                null
+            }
         } else {
             null
         }
