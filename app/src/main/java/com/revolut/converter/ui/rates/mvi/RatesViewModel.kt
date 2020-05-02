@@ -1,8 +1,8 @@
 package com.revolut.converter.ui.rates.mvi
 
-import androidx.lifecycle.ViewModel
 import com.revolut.converter.core.mvi.Store
 import com.revolut.converter.core.navigation.ToExchange
+import com.revolut.converter.core.ui.MVIViewModel
 import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.rates.RatesState
 import com.revolut.converter.ui.DecimalFormat
@@ -10,24 +10,18 @@ import com.revolut.converter.ui.exchange.ExchangeInput
 import com.revolut.converter.ui.exchange.ExchangeState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class RatesViewModel @Inject constructor(
-    private val store: Store<RatesAction, RatesViewState>,
+    store: Store<RatesAction, RatesViewState>,
     initialState: RatesState
-) : ViewModel() {
+) : MVIViewModel<RatesAction, RatesViewState>(store) {
 
     companion object {
         internal val initialState
             get() = RatesState("EUR", "100")
     }
-
-    private val uiActions = PublishSubject.create<RatesAction>()
-    private var actionsDisposable: Disposable = Disposables.empty()
-    private var wiringDisposable: Disposable = Disposables.empty()
 
     private val singleActions = PublishSubject.create<RatesSingleAction>()
 
@@ -36,19 +30,13 @@ class RatesViewModel @Inject constructor(
     //holds params of the last requested exchange
     var converterState = initialState
 
-    init {
-        wiringDisposable = store.wire()
-    }
-
-    fun observeViewState(): Observable<RatesViewState> {
-        return store.observeViewState()
+    override fun observeViewState(): Observable<RatesViewState> {
+        return super.observeViewState()
             .doOnNext {
                 if (it.items.isNotEmpty()) {
                     latestItems = it.items
                 }
             }
-            .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun observeSingleActions(): Observable<RatesSingleAction> {
@@ -56,8 +44,8 @@ class RatesViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun onAttach() {
-        actionsDisposable = store.bind(uiActions.hide())
+    override fun onAttach(isFirst: Boolean) {
+        super.onAttach(isFirst)
         receiveCurrencyUpdates()
     }
 
@@ -96,21 +84,8 @@ class RatesViewModel @Inject constructor(
         postSingleAction(navAction)
     }
 
-    private fun postAction(action: RatesAction) {
-        uiActions.onNext(action)
-    }
-
     private fun postSingleAction(action: RatesSingleAction) {
         singleActions.onNext(action)
-    }
-
-    fun onDetach() {
-        actionsDisposable.dispose()
-    }
-
-    override fun onCleared() {
-        wiringDisposable.dispose()
-        super.onCleared()
     }
 
 }

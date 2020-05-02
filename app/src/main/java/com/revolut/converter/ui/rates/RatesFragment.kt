@@ -10,7 +10,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.App
 import com.revolut.converter.R
 import com.revolut.converter.core.navigation.RatesNavigator
-import com.revolut.converter.core.ui.BaseFragment
+import com.revolut.converter.core.ui.BaseMVIFragment
+import com.revolut.converter.core.ui.MVIViewModel
 import com.revolut.converter.ui.DecimalFormat
 import com.revolut.converter.ui.rates.mvi.RatesSingleAction
 import com.revolut.converter.ui.rates.mvi.RatesViewModel
@@ -20,7 +21,7 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_currencies.*
 import javax.inject.Inject
 
-class RatesFragment : BaseFragment() {
+class RatesFragment : BaseMVIFragment() {
 
     override var layoutId: Int = R.layout.fragment_currencies
 
@@ -70,12 +71,11 @@ class RatesFragment : BaseFragment() {
     }
 
     override fun onStart() {
-        viewModel.onAttach()
+        super.onStart()
         observeCurrencies()
         viewModel
             .observeSingleActions()
             .subscribeTillStop(::consumeSingleAction)
-        super.onStart()
     }
 
     private fun observeCurrencies() {
@@ -128,9 +128,8 @@ class RatesFragment : BaseFragment() {
         }
     }
 
-    override fun onStop() {
-        viewModel.onDetach()
-        super.onStop()
+    override fun getViewModel(): MVIViewModel<*, *> {
+        return viewModel
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
