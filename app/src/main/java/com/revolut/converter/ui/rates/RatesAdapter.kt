@@ -4,15 +4,14 @@ import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import com.revolut.converter.ui.delegate.CurrencyDelegate
 import com.revolut.converter.ui.delegate.CurrencyItem
-import com.revolut.converter.ui.rates.mvi.RatesViewModel
 
 class RatesAdapter(
-    viewModel: RatesViewModel
+    callback: CurrencyDelegate.Callback
 ) : AsyncListDifferDelegationAdapter<CurrencyItem>(diffCallback) {
 
     init {
         delegatesManager
-            .addDelegate(CurrencyDelegate(viewModel))
+            .addDelegate(CurrencyDelegate(callback))
     }
 
     companion object {

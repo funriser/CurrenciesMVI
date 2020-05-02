@@ -14,12 +14,11 @@ import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.DecimalFormat
 import com.revolut.converter.ui.input.BaseCurrencyLengthFilter
 import com.revolut.converter.ui.input.BaseCurrencyTextWatcher
-import com.revolut.converter.ui.rates.mvi.RatesViewModel
 import kotlinx.android.synthetic.main.item_currency.view.*
 import java.math.BigDecimal
 
 class CurrencyDelegate(
-    private val viewModel: RatesViewModel
+    private val callback: Callback
 ): AdapterDelegate<List<CurrencyItem>>() {
 
     companion object {
@@ -55,28 +54,33 @@ class CurrencyDelegate(
                 }
                 //if switched to the new basic currency
                 PAYLOAD_NEW_BASIC -> {
-                    holder.bindBaseCurrency(viewModel, item)
+                    holder.bindBaseCurrency(callback, item)
                 }
             }
         } else {
-            holder.bind(viewModel, item)
+            holder.bind(callback, item)
         }
+    }
+    
+    interface Callback {
+        fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String)
+        fun onCurrencySelected(position: Int)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private var textWatcher: TextWatcher? = null
 
-        fun bind(viewModel: RatesViewModel, currency: ConvertedCurrency) {
+        fun bind(callback: Callback, currency: ConvertedCurrency) {
             releaseBaseCurrencyInput()
             bindCurrency(currency)
             bindAmount(currency.amount)
             when (currency) {
                 is BaseConvertedCurrency -> {
-                    bindBaseCurrency(viewModel, currency)
+                    bindBaseCurrency(callback, currency)
                 }
                 else -> {
-                    bindExchangeCurrency(viewModel, currency)
+                    bindExchangeCurrency(callback, currency)
                 }
             }
         }
@@ -102,13 +106,13 @@ class CurrencyDelegate(
          * Performs binding related only to base currency
          */
         fun bindBaseCurrency(
-            viewModel: RatesViewModel,
+            callback: Callback,
             convertedCurrency: ConvertedCurrency
         ) {
             itemView.setOnClickListener(null)
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    setUpBaseCurrencyInput(viewModel, convertedCurrency)
+                    setUpBaseCurrencyInput(callback, convertedCurrency)
                 } else {
                     releaseBaseCurrencyInput()
                     (itemView.parent as ViewGroup).isFocusable = false
@@ -120,24 +124,24 @@ class CurrencyDelegate(
         /**
          * Performs binding related only to currencies that show rates
          */
-        private fun bindExchangeCurrency(viewModel: RatesViewModel,
+        private fun bindExchangeCurrency(callback: Callback,
                                          convertedCurrency: ConvertedCurrency) {
             itemView.setOnClickListener {
                 (itemView.parent as View).clearFocus()
                 itemView.edAmount.requestFocus()
-                onNewExchangeAmount(viewModel, convertedCurrency)
+                onNewExchangeAmount(callback, convertedCurrency)
             }
             itemView.edAmount.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    setUpBaseCurrencyInput(viewModel, convertedCurrency)
-                    onNewExchangeAmount(viewModel, convertedCurrency)
+                    setUpBaseCurrencyInput(callback, convertedCurrency)
+                    onNewExchangeAmount(callback, convertedCurrency)
                 } else {
                     releaseBaseCurrencyInput()
                 }
             }
             itemView.edAmount.filters = arrayOf()
             itemView.layoutCurrency.setOnClickListener {
-                viewModel.onCurrencySelected(adapterPosition)
+                callback.onCurrencySelected(adapterPosition)
             }
         }
 
@@ -159,20 +163,20 @@ class CurrencyDelegate(
         }
 
         private fun onNewExchangeAmount(
-            viewModel: RatesViewModel,
+            callback: Callback,
             convertedCurrency: ConvertedCurrency
         ) {
             val input = itemView.edAmount.text.toString()
-            viewModel.onNewExchangeAmount(convertedCurrency, input)
+            callback.onNewExchangeAmount(convertedCurrency, input)
         }
 
         private fun setUpBaseCurrencyInput(
-            viewModel: RatesViewModel,
+            callback: Callback,
             currency: ConvertedCurrency
         ) {
             setPrimaryAmountColor()
             textWatcher = BaseCurrencyTextWatcher(itemView.edAmount) {
-                onNewExchangeAmount(viewModel, currency)
+                onNewExchangeAmount(callback, currency)
             }
             itemView.edAmount.apply {
                 addTextChangedListener(textWatcher)

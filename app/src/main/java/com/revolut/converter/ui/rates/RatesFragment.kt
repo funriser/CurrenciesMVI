@@ -12,7 +12,9 @@ import com.revolut.converter.R
 import com.revolut.converter.core.navigation.RatesNavigator
 import com.revolut.converter.core.ui.BaseMVIFragment
 import com.revolut.converter.core.ui.MVIViewModel
+import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.ui.DecimalFormat
+import com.revolut.converter.ui.delegate.CurrencyDelegate
 import com.revolut.converter.ui.rates.mvi.RatesSingleAction
 import com.revolut.converter.ui.rates.mvi.RatesViewModel
 import com.revolut.converter.ui.rates.mvi.RatesViewState
@@ -21,7 +23,7 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_currencies.*
 import javax.inject.Inject
 
-class RatesFragment : BaseMVIFragment() {
+class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callback {
 
     override var layoutId: Int = R.layout.fragment_currencies
 
@@ -57,7 +59,7 @@ class RatesFragment : BaseMVIFragment() {
     }
 
     private fun initView() {
-        ratesAdapter = RatesAdapter(viewModel)
+        ratesAdapter = RatesAdapter(this)
         val scrollListener = getOnScrollListener()
         rvCurrencyRates.apply {
             layoutManager = LinearLayoutManager(requireActivity())
@@ -72,24 +74,31 @@ class RatesFragment : BaseMVIFragment() {
 
     override fun onStart() {
         super.onStart()
-        observeCurrencies()
         viewModel
             .observeSingleActions()
             .subscribeTillStop(::consumeSingleAction)
     }
 
-    private fun observeCurrencies() {
+    override fun observeViewState() {
         currenciesDisposable += viewModel.observeViewState()
             .subscribe(::renderUi)
+    }
+
+    override fun onNewExchangeAmount(currency: ConvertedCurrency, amount: String) {
+        viewModel.onNewExchangeAmount(currency, amount)
+    }
+
+    override fun onCurrencySelected(position: Int) {
+        viewModel.onCurrencySelected(position)
     }
 
     private fun stopObservingCurrencies() {
         currenciesDisposable.clear()
     }
 
-    private fun renderUi(state: RatesViewState) {
-        renderCurrencies(state)
-        renderFailure(state)
+    override fun renderUi(viewState: RatesViewState) {
+        renderCurrencies(viewState)
+        renderFailure(viewState)
     }
 
     private fun renderCurrencies(state: RatesViewState) {
@@ -122,13 +131,13 @@ class RatesFragment : BaseMVIFragment() {
                 if (rvCurrencyRates.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
                     stopObservingCurrencies()
                 } else {
-                    observeCurrencies()
+                    observeViewState()
                 }
             }
         }
     }
 
-    override fun getViewModel(): MVIViewModel<*, *> {
+    override fun getViewModel(): MVIViewModel<*, RatesViewState> {
         return viewModel
     }
 

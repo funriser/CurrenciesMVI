@@ -1,5 +1,6 @@
 package com.revolut.converter.core.di
 
+import com.revolut.converter.core.di.exchange.ExchangeComponent
 import com.revolut.converter.core.di.rates.RatesComponent
 import dagger.Component
 import javax.inject.Singleton
@@ -9,5 +10,7 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun ratesComponentBuilder(): RatesComponent.Builder
+
+    fun exchangeComponentBuilder(): ExchangeComponent.Builder
 
 }

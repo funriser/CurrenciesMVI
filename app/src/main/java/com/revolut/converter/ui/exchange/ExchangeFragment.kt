@@ -1,17 +1,45 @@
 package com.revolut.converter.ui.exchange
 
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.revolut.converter.App
 import com.revolut.converter.R
-import com.revolut.converter.core.ui.BaseFragment
+import com.revolut.converter.core.ui.BaseMVIFragment
+import com.revolut.converter.core.ui.MVIViewModel
+import com.revolut.converter.ui.exchange.mvi.ExchangeViewModel
+import com.revolut.converter.ui.exchange.mvi.ExchangeViewState
 import kotlinx.android.synthetic.main.fragment_exchange.*
+import javax.inject.Inject
 
-class ExchangeFragment: BaseFragment() {
+class ExchangeFragment: BaseMVIFragment<ExchangeViewState>() {
 
     override var layoutId = R.layout.fragment_exchange
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private val args: ExchangeFragmentArgs by navArgs()
+    private lateinit var viewModel: ExchangeViewModel
+    private lateinit var exchangeAdapter: ExchangeAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val initialState = ExchangeViewState.createInitialState(
+            exchangeFrom = args.exchangeState.from,
+            exchangeTo = args.exchangeState.to
+        )
+
+        App.appComponent
+            .exchangeComponentBuilder()
+            .initialState(initialState)
+            .build()
+            .inject(this)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[ExchangeViewModel::class.java]
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -19,10 +47,26 @@ class ExchangeFragment: BaseFragment() {
     }
 
     private fun initView() {
-        tvStub.text = "From: ${args.exchangeState.from}\nTo: ${args.exchangeState.to}"
+        exchangeAdapter = ExchangeAdapter()
+        rvExchangeItems.layoutManager = LinearLayoutManager(requireActivity())
+        rvExchangeItems.adapter = exchangeAdapter
         btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    override fun renderUi(viewState: ExchangeViewState) {
+        renderCurrencies(viewState)
+    }
+
+    private fun renderCurrencies(viewState: ExchangeViewState) {
+        if (viewState.items.isNotEmpty()) {
+            exchangeAdapter.items = viewState.items
+        }
+    }
+
+    override fun getViewModel(): MVIViewModel<*, ExchangeViewState> {
+        return viewModel
     }
 
 }
