@@ -11,7 +11,7 @@ class RatesAdapter(
 
     init {
         delegatesManager
-            .addDelegate(CurrencyDelegate(callback))
+            .addDelegate(CurrencyDelegate(callback, isEditable = true))
     }
 
     companion object {

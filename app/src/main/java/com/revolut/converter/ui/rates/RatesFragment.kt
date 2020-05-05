@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.revolut.converter.App
 import com.revolut.converter.R
-import com.revolut.converter.core.navigation.RatesNavigator
 import com.revolut.converter.core.ui.BaseMVIFragment
 import com.revolut.converter.core.ui.MVIViewModel
 import com.revolut.converter.domain.entity.ConvertedCurrency
@@ -23,12 +22,15 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_currencies.*
 import javax.inject.Inject
 
-class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callback {
+class RatesFragment : BaseMVIFragment<RatesViewState, RatesSingleAction>(),
+    CurrencyDelegate.Callback {
 
     override var layoutId: Int = R.layout.fragment_currencies
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var navigator: RatesNavigator
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var navigator: RatesNavigator
 
     private lateinit var viewModel: RatesViewModel
     private lateinit var ratesAdapter: RatesAdapter
@@ -50,7 +52,7 @@ class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callba
 
     private fun getRatesState(savedInstanceState: Bundle?): RatesState {
         val restoredState = savedInstanceState?.getParcelable<RatesState>(KEY_CONVERTER_STATE)
-        return restoredState?:RatesViewModel.initialState
+        return restoredState ?: RatesViewModel.initialState
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -67,16 +69,6 @@ class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callba
             adapter = ratesAdapter
             addOnScrollListener(scrollListener)
         }
-        btnToExchange.setOnClickListener {
-
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel
-            .observeSingleActions()
-            .subscribeTillStop(::consumeSingleAction)
     }
 
     override fun observeViewState() {
@@ -118,7 +110,7 @@ class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callba
         }
     }
 
-    private fun consumeSingleAction(action: RatesSingleAction) {
+    override fun consumeSingleAction(action: RatesSingleAction) {
         if (action is RatesSingleAction.RatesNavAction) {
             navigator.handleAction(findNavController(), action)
             return
@@ -126,7 +118,7 @@ class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callba
     }
 
     private fun getOnScrollListener(): RecyclerView.OnScrollListener {
-        return object: RecyclerView.OnScrollListener() {
+        return object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (rvCurrencyRates.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
                     stopObservingCurrencies()
@@ -137,7 +129,7 @@ class RatesFragment : BaseMVIFragment<RatesViewState>(), CurrencyDelegate.Callba
         }
     }
 
-    override fun getViewModel(): MVIViewModel<*, RatesViewState> {
+    override fun getViewModel(): MVIViewModel<*, RatesSingleAction, RatesViewState> {
         return viewModel
     }
 

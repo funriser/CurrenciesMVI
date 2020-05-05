@@ -1,8 +1,9 @@
-package com.revolut.converter.core.navigation
+package com.revolut.converter.ui.rates
 
 import androidx.navigation.NavController
 import com.revolut.converter.core.di.rates.RatesScope
-import com.revolut.converter.ui.rates.RatesFragmentDirections
+import com.revolut.converter.core.navigation.Navigator
+import com.revolut.converter.core.navigation.ToExchange
 import com.revolut.converter.ui.rates.mvi.RatesSingleAction
 import javax.inject.Inject
 

@@ -9,16 +9,20 @@ import com.revolut.converter.App
 import com.revolut.converter.R
 import com.revolut.converter.core.ui.BaseMVIFragment
 import com.revolut.converter.core.ui.MVIViewModel
+import com.revolut.converter.ui.exchange.mvi.ExchangeSingleAction
 import com.revolut.converter.ui.exchange.mvi.ExchangeViewModel
 import com.revolut.converter.ui.exchange.mvi.ExchangeViewState
 import kotlinx.android.synthetic.main.fragment_exchange.*
 import javax.inject.Inject
 
-class ExchangeFragment: BaseMVIFragment<ExchangeViewState>() {
+class ExchangeFragment : BaseMVIFragment<ExchangeViewState, ExchangeSingleAction>() {
 
     override var layoutId = R.layout.fragment_exchange
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var exchangeNavigator: ExchangeNavigator
 
     private val args: ExchangeFragmentArgs by navArgs()
     private lateinit var viewModel: ExchangeViewModel
@@ -53,6 +57,9 @@ class ExchangeFragment: BaseMVIFragment<ExchangeViewState>() {
         btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+        btnToExchange.setOnClickListener {
+            viewModel.performExchange()
+        }
     }
 
     override fun renderUi(viewState: ExchangeViewState) {
@@ -65,7 +72,15 @@ class ExchangeFragment: BaseMVIFragment<ExchangeViewState>() {
         }
     }
 
-    override fun getViewModel(): MVIViewModel<*, ExchangeViewState> {
+    override fun consumeSingleAction(action: ExchangeSingleAction) {
+        when (action) {
+            is ExchangeSingleAction.ExchangeNavAction -> {
+                exchangeNavigator.handleAction(findNavController(), action)
+            }
+        }
+    }
+
+    override fun getViewModel(): MVIViewModel<*, ExchangeSingleAction, ExchangeViewState> {
         return viewModel
     }
 

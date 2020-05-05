@@ -18,7 +18,8 @@ import kotlinx.android.synthetic.main.item_currency.view.*
 import java.math.BigDecimal
 
 class CurrencyDelegate(
-    private val callback: Callback
+    private val callback: Callback,
+    private val isEditable: Boolean
 ): AdapterDelegate<List<CurrencyItem>>() {
 
     companion object {
@@ -27,11 +28,8 @@ class CurrencyDelegate(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return ViewHolder(
-            parent.inflate(
-                R.layout.item_currency
-            )
-        )
+        val view = parent.inflate(R.layout.item_currency)
+        return ViewHolder(view, isEditable)
     }
 
     override fun isForViewType(items: List<CurrencyItem>, position: Int): Boolean {
@@ -67,7 +65,10 @@ class CurrencyDelegate(
         fun onCurrencySelected(position: Int)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(
+        itemView: View,
+        private val isEditable: Boolean
+    ) : RecyclerView.ViewHolder(itemView) {
 
         private var textWatcher: TextWatcher? = null
 
@@ -75,6 +76,10 @@ class CurrencyDelegate(
             releaseBaseCurrencyInput()
             bindCurrency(currency)
             bindAmount(currency.amount)
+            if (!isEditable) {
+                disableEdit()
+                return
+            }
             when (currency) {
                 is BaseConvertedCurrency -> {
                     bindBaseCurrency(callback, currency)
@@ -124,8 +129,10 @@ class CurrencyDelegate(
         /**
          * Performs binding related only to currencies that show rates
          */
-        private fun bindExchangeCurrency(callback: Callback,
-                                         convertedCurrency: ConvertedCurrency) {
+        private fun bindExchangeCurrency(
+            callback: Callback,
+            convertedCurrency: ConvertedCurrency
+        ) {
             itemView.setOnClickListener {
                 (itemView.parent as View).clearFocus()
                 itemView.edAmount.requestFocus()
@@ -199,6 +206,11 @@ class CurrencyDelegate(
         private fun setLightAmountColor() {
             val textColor = ContextCompat.getColor(itemView.context, R.color.colorGreyLight)
             itemView.edAmount.setTextColor(textColor)
+        }
+
+        private fun disableEdit() {
+            itemView.edAmount.isEnabled = false
+            itemView.edAmount.background = null
         }
 
     }

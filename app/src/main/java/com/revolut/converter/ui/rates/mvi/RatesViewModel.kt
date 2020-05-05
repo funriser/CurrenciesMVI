@@ -9,21 +9,17 @@ import com.revolut.converter.ui.DecimalFormat
 import com.revolut.converter.ui.exchange.ExchangeInput
 import com.revolut.converter.ui.exchange.ExchangeState
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class RatesViewModel @Inject constructor(
     store: Store<RatesAction, RatesViewState>,
     initialState: RatesState
-) : MVIViewModel<RatesAction, RatesViewState>(store) {
+) : MVIViewModel<RatesAction, RatesSingleAction, RatesViewState>(store) {
 
     companion object {
         internal val initialState
             get() = RatesState("EUR", "100")
     }
-
-    private val singleActions = PublishSubject.create<RatesSingleAction>()
 
     private var latestItems: List<ConvertedCurrency>? = null
 
@@ -37,11 +33,6 @@ class RatesViewModel @Inject constructor(
                     latestItems = it.items
                 }
             }
-    }
-
-    fun observeSingleActions(): Observable<RatesSingleAction> {
-        return singleActions.hide()
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun onAttach(isFirst: Boolean) {
@@ -82,10 +73,6 @@ class RatesViewModel @Inject constructor(
             )
         )
         postSingleAction(navAction)
-    }
-
-    private fun postSingleAction(action: RatesSingleAction) {
-        singleActions.onNext(action)
     }
 
 }

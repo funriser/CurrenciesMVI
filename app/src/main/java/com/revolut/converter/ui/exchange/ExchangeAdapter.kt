@@ -16,7 +16,7 @@ class ExchangeAdapter: ListDelegationAdapter<List<CurrencyItem>>() {
 
     init {
         delegatesManager
-            .addDelegate(CurrencyDelegate(currencyCallback))
+            .addDelegate(CurrencyDelegate(currencyCallback, isEditable = false))
             .addDelegate(ExchangeDecorDelegate())
     }
 

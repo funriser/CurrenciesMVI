@@ -1,9 +1,9 @@
 package com.revolut.converter.core.navigation
 
 import androidx.navigation.NavController
-import com.revolut.converter.core.mvi.SingleAction
+import com.revolut.converter.core.mvi.Action
 
-abstract class Navigator<NavAction: SingleAction> {
+abstract class Navigator<NavAction: Action> {
 
     abstract fun handleAction(controller: NavController, action: NavAction)
 

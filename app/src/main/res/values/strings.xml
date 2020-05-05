@@ -6,4 +6,6 @@
     <string name="error_try_again">Try again</string>
 
     <string name="rates_exchange">Exchange</string>
+    <string name="exchange_to">Exchange to</string>
+    <string name="to_rates">To Rates</string>
 </resources>
