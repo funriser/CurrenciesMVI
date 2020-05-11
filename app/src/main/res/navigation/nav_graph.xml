@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/converterFragment"
-        android:name="com.revolut.converter.ui.rates.RatesFragment"
+        android:name="com.funrisestudio.converter.ui.rates.RatesFragment"
         android:label="ConverterFragment" >
         <action
             android:id="@+id/toExchange"
@@ -19,11 +19,11 @@
 
     <fragment
         android:id="@+id/exchangeFragment"
-        android:name="com.revolut.converter.ui.exchange.ExchangeFragment"
+        android:name="com.funrisestudio.converter.ui.exchange.ExchangeFragment"
         android:label="ExchangeFragment" >
         <argument
             android:name="exchangeState"
-            app:argType="com.revolut.converter.ui.exchange.ExchangeState" />
+            app:argType="com.funrisestudio.converter.ui.exchange.ExchangeState" />
         <action
             android:id="@+id/toExchangeSuccess"
             app:destination="@id/exchangeSuccessDialog" />
@@ -31,7 +31,7 @@
 
     <dialog
         android:id="@+id/exchangeSuccessDialog"
-        android:name="com.revolut.converter.ui.exchange.ExchangeSuccessDialog"
+        android:name="com.funrisestudio.converter.ui.exchange.ExchangeSuccessDialog"
         android:label="ExchangeSuccessDialog" />
 
 </navigation>
