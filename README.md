@@ -4,16 +4,15 @@ This repository demonstrates the MVI + RxJava implementation in android app. The
 
 The application contains two master-detail screens. The first screen displays exchange rates for base currency and updates them every 1 second. When you choose one of those currencies, the second screen opens and show details of exchanging base currency to the selected one. You can press "Exchange" button to sell your currency.
 
-### Built with:
-Clean architecture/MVI
+## Built with:
+* Clean architecture/MVI
+* Android Architecture Components
+* AdapterDelegates for RecyclerView
+* RxJava2
+* Retrofit
+* Dagger
 
-RxJava2
-
-Retrofit
-
-Dagger
-
-### Inspired by:
+## Inspired by:
 Unidirectional Android Architecture
 
 https://www.youtube.com/watch?v=IFj-ptrQ6ho&t=2405s
