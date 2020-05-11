@@ -37,6 +37,8 @@ class RatesFragment : BaseMVIFragment<RatesViewState, RatesSingleAction>(),
 
     private val currenciesDisposable = CompositeDisposable()
 
+    private var errorBar: Snackbar? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DecimalFormat.updateConfig()
@@ -94,19 +96,23 @@ class RatesFragment : BaseMVIFragment<RatesViewState, RatesSingleAction>(),
     }
 
     private fun renderCurrencies(state: RatesViewState) {
-        if (state.items.isNotEmpty()) {
-            ratesAdapter.items = state.items
-        }
+        ratesAdapter.items = state.items
     }
 
     private fun renderFailure(state: RatesViewState) {
         if (state.error.isNotEmpty()) {
-            Snackbar
+            errorBar?.dismiss()
+            errorBar = Snackbar
                 .make(rvCurrencyRates, state.error, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.error_try_again) {
                     viewModel.receiveCurrencyUpdates()
+                    //snackbar hides itself when action performed
+                    errorBar = null
                 }
-                .show()
+            errorBar?.show()
+        } else {
+            errorBar?.dismiss()
+            errorBar = null
         }
     }
 

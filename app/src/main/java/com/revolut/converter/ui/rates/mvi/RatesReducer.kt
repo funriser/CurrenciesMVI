@@ -15,7 +15,7 @@ class RatesReducer @Inject constructor(
         return when(action) {
             is RatesAction.CurrenciesError -> {
                 val errorStr = errorHandler.getErrorMessage(action.throwable)
-                RatesViewState.createErrorState(errorStr)
+                RatesViewState.createErrorState(viewState.items, errorStr)
             }
             is RatesAction.CurrenciesLoaded -> {
                 RatesViewState.createCurrenciesReceived(action.items)

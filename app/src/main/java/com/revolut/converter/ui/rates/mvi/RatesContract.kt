@@ -49,9 +49,12 @@ data class RatesViewState(
             )
         }
 
-        fun createErrorState(error: String): RatesViewState {
+        fun createErrorState(
+            currentItems: List<ConvertedCurrency>,
+            error: String
+        ): RatesViewState {
             return RatesViewState(
-                items = emptyList(),
+                items = currentItems,
                 isLoading = true,
                 error = error
             )
