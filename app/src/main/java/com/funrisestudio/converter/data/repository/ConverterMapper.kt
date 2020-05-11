@@ -11,7 +11,7 @@ import javax.inject.Inject
 class ConverterMapper @Inject constructor() {
 
     fun getExchangeRates(ratesDto: CurrencyRatesDto): ExchangeRates {
-        val baseCurrency = getCurrency(ratesDto.baseCurrency)
+        val baseCurrency = getCurrency(ratesDto.base)
         val currencyRates = ratesDto.rates.map {
             getCurrencyRate(it)
         }

@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface ConverterApi {
 
-    @GET("api/android/latest")
+    @GET("latest")
     fun getCurrencyRates(@Query("base") baseCurrency: String): Single<Response<CurrencyRatesDto>>
 
 }

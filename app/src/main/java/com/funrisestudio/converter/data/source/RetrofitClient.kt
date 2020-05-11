@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "https://hiring.revolut.codes/"
+    private const val BASE_URL = "https://revolut.duckdns.org/"
 
     fun getClient(): Retrofit {
         val okHttpClient = getOkHttpClient()
