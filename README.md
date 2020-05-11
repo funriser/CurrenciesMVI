@@ -1,15 +1,19 @@
-# Currency Converter
-### Android test application
+# CurrenciesMVI
 
-The provided solution is ready for production. 
-(Please be sure to put the official Revolut launcher icon before release).
+This repository demonstrates the MVI + RxJava implementation in android app. The provided solution uses Clean Architecture for separation of concerns and takes advantages of Dagger for dependency injection.
 
-### Features:
-Realtime currency rates updates.
-
-I18N support for money format.
-
-Handling configuration change of the locale.
+The application contains two master-detail screens. The first screen displays exchange rates for base currency and updates them every 1 second. When you choose one of those currencies, the second screen opens and show details of exchanging base currency to the selected one. You can press "Exchange" button to sell your currency.
 
 ### Built with:
-Clean architecture/MVVM, Android AAC, RxJava, Retrofit, and Dagger
+Clean architecture/MVI
+
+RxJava2
+
+Retrofit
+
+Dagger
+
+### Inspired by:
+Unidirectional Android Architecture
+
+https://www.youtube.com/watch?v=IFj-ptrQ6ho&t=2405s
