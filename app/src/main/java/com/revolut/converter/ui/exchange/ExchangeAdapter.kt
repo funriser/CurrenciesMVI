@@ -21,6 +21,9 @@ class ExchangeAdapter: ListDelegationAdapter<List<CurrencyItem>>() {
     }
 
     override fun setItems(items: List<CurrencyItem>?) {
+        if (items == this.items) {
+            return
+        }
         super.setItems(items)
         notifyDataSetChanged()
     }

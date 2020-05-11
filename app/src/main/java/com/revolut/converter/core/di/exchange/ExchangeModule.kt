@@ -3,6 +3,7 @@ package com.revolut.converter.core.di.exchange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.revolut.converter.core.mvi.*
+import com.revolut.converter.domain.interactor.ExchangeMiddleware
 import com.revolut.converter.ui.exchange.mvi.ExchangeAction
 import com.revolut.converter.ui.exchange.mvi.ExchangeReducer
 import com.revolut.converter.ui.exchange.mvi.ExchangeViewModel
@@ -29,8 +30,14 @@ abstract class ExchangeModule {
     @Binds
     @ExchangeScope
     abstract fun exchangeMviStore(
-        presentationStore: PresentationStore<ExchangeAction, ExchangeViewState>
+        store: DefaultStore<ExchangeAction, ExchangeViewState>
     ): Store<ExchangeAction, ExchangeViewState>
+
+    @Binds
+    @ExchangeScope
+    abstract fun exchangeMiddleware(
+        exchangeMiddleware: ExchangeMiddleware
+    ): MiddleWare<ExchangeAction, ExchangeViewState>
 
     @Binds
     abstract fun exchangeReducer(

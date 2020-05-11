@@ -22,4 +22,15 @@ class ExchangeNavigator @Inject constructor() : Navigator<ExchangeSingleAction.E
         }
     }
 
+    fun isCurrent(
+        controller: NavController,
+        action: ExchangeSingleAction.ExchangeNavAction
+    ): Boolean {
+        val current = controller.currentDestination
+        return when (action) {
+            is ToExchangeSuccess -> current?.id == R.id.exchangeSuccessDialog
+            else -> false
+        }
+    }
+
 }

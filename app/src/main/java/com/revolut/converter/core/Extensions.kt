@@ -19,3 +19,11 @@ fun <T : Any, L : LiveData<T>> LifecycleOwner.observe(liveData: L, body: (T?) ->
 
 fun ViewGroup.inflate (@LayoutRes layoutId: Int, root: ViewGroup = this, attachToRoot: Boolean = false): View
         = LayoutInflater.from(context).inflate(layoutId, root, attachToRoot)
+
+fun View.visibleIf(condition: Boolean) {
+    this.visibility = if (condition) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}

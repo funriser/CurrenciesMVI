@@ -9,7 +9,15 @@ class ExchangeReducer @Inject constructor(): Reducer<ExchangeAction, ExchangeVie
         viewState: ExchangeViewState,
         action: ExchangeAction
     ): ExchangeViewState {
-        return viewState
+        return when (action) {
+            is ExchangeAction.ExchangeLoading -> {
+                ExchangeViewState.createLoadingState(viewState.items)
+            }
+            is ExchangeAction.CurrenciesExchanged -> {
+                ExchangeViewState.createExchangesState(viewState.items)
+            }
+            else -> viewState
+        }
     }
 
 }

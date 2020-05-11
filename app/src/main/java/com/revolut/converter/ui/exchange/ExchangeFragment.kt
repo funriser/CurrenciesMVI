@@ -7,8 +7,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revolut.converter.App
 import com.revolut.converter.R
+import com.revolut.converter.core.navigation.ToExchangeSuccess
 import com.revolut.converter.core.ui.BaseMVIFragment
 import com.revolut.converter.core.ui.MVIViewModel
+import com.revolut.converter.core.visibleIf
 import com.revolut.converter.ui.exchange.mvi.ExchangeSingleAction
 import com.revolut.converter.ui.exchange.mvi.ExchangeViewModel
 import com.revolut.converter.ui.exchange.mvi.ExchangeViewState
@@ -58,30 +60,41 @@ class ExchangeFragment : BaseMVIFragment<ExchangeViewState, ExchangeSingleAction
             findNavController().popBackStack()
         }
         btnToExchange.setOnClickListener {
-            viewModel.performExchange()
+            viewModel.onPerformExchange()
         }
     }
 
     override fun renderUi(viewState: ExchangeViewState) {
         renderCurrencies(viewState)
+        renderProgress(viewState)
+        renderSuccess(viewState)
     }
 
     private fun renderCurrencies(viewState: ExchangeViewState) {
-        if (viewState.items.isNotEmpty()) {
-            exchangeAdapter.items = viewState.items
-        }
+        exchangeAdapter.items = viewState.items
     }
 
-    override fun consumeSingleAction(action: ExchangeSingleAction) {
-        when (action) {
-            is ExchangeSingleAction.ExchangeNavAction -> {
-                exchangeNavigator.handleAction(findNavController(), action)
-            }
+    private fun renderProgress(viewState: ExchangeViewState) {
+        vProgress.visibleIf(viewState.isLoading)
+    }
+
+    private fun renderSuccess(viewState: ExchangeViewState) {
+        val controller = findNavController()
+        val navAction = ToExchangeSuccess()
+        val isShowingSuccess = exchangeNavigator.isCurrent(controller, navAction)
+        if (viewState.isExchanged && !isShowingSuccess) {
+            exchangeNavigator.handleAction(controller, ToExchangeSuccess())
+        } else if(!viewState.isExchanged && isShowingSuccess) {
+            controller.popBackStack()
         }
     }
 
     override fun getViewModel(): MVIViewModel<*, ExchangeSingleAction, ExchangeViewState> {
         return viewModel
+    }
+
+    override fun consumeSingleAction(action: ExchangeSingleAction) {
+
     }
 
 }

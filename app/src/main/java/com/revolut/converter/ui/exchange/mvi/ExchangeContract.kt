@@ -8,14 +8,20 @@ import com.revolut.converter.ui.delegate.CurrencyItem
 import com.revolut.converter.ui.exchange.ExchangeDecorItem
 import com.revolut.converter.ui.exchange.ExchangeInput
 
-sealed class ExchangeAction: Action
+sealed class ExchangeAction: Action {
+    object PerformExchange: ExchangeAction()
+    object CurrenciesExchanged: ExchangeAction()
+    object ExchangeLoading: ExchangeAction()
+}
 
 sealed class ExchangeSingleAction: SingleAction {
     abstract class ExchangeNavAction: ExchangeSingleAction()
 }
 
 data class ExchangeViewState(
-    val items: List<CurrencyItem>
+    val items: List<CurrencyItem>,
+    val isLoading: Boolean,
+    val isExchanged: Boolean
 ): ViewState {
 
     companion object {
@@ -33,12 +39,32 @@ data class ExchangeViewState(
                 currency = exchangeTo.currency,
                 amount = exchangeTo.amount
             )
-            val delegateItems =  listOf(
+            val delegateItems = listOf(
                 currencyFrom,
                 decorItem,
                 currencyTo
             )
-            return ExchangeViewState(delegateItems)
+            return ExchangeViewState(
+                items = delegateItems,
+                isLoading = false,
+                isExchanged = false
+            )
+        }
+
+        fun createLoadingState(currentItems: List<CurrencyItem>): ExchangeViewState {
+            return ExchangeViewState(
+                items = currentItems,
+                isLoading = true,
+                isExchanged = false
+            )
+        }
+
+        fun createExchangesState(currentItems: List<CurrencyItem>): ExchangeViewState {
+            return ExchangeViewState(
+                items = currentItems,
+                isLoading = false,
+                isExchanged = true
+            )
         }
 
     }
