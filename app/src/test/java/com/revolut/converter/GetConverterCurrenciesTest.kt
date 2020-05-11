@@ -6,6 +6,7 @@ import com.revolut.converter.domain.entity.ConvertedCurrency
 import com.revolut.converter.domain.entity.Currency
 import com.revolut.converter.domain.interactor.GetConvertedCurrencies
 import com.revolut.converter.domain.repository.ConverterRepository
+import com.revolut.converter.ui.rates.mvi.RatesAction
 import com.revolut.converter.utils.test
 import io.reactivex.Single
 import org.junit.Before
@@ -135,7 +136,11 @@ class GetConverterCurrenciesTest {
         verifyNoMoreInteractions(repository)
     }
 
-    private fun isExchangedCorrectly(result: List<ConvertedCurrency>): Boolean {
+    private fun isExchangedCorrectly(ratesAction: RatesAction): Boolean {
+        if (ratesAction !is RatesAction.CurrenciesLoaded) {
+            return false
+        }
+        val result = ratesAction.items
         val rates = TestData.mockedRates()
         if (result.size != 4) {
             return false
