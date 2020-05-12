@@ -1,6 +1,6 @@
 package com.funrisestudio.converter.rates
 
-import com.funrisestudio.converter.R
+import com.funrisestudio.converter.TestData
 import com.funrisestudio.converter.data.dto.CurrencyRatesDto
 import com.funrisestudio.converter.data.repository.RatesMapper
 import com.funrisestudio.converter.domain.entity.Currency
@@ -16,32 +16,9 @@ class RatesMapperTest {
 
     @Test
     fun `should map dto to entity correctly`() {
-        val ratesDto = CurrencyRatesDto(
-            base = "EUR",
-            rates = mapOf(
-                "USD" to "1.1581",
-                "RUB" to "79.214"
-            )
-        )
-        val expectedResult = ExchangeRates(
-            baseCurrency = Currency("EUR", "Euro", R.drawable.flag_eur),
-            rates = listOf(
-                CurrencyRate(
-                    currency = Currency(
-                        "USD", "United States Dollar", R.drawable.flag_usd
-                    ),
-                    rate = BigDecimal("1.1581")
-                ),
-                CurrencyRate(
-                    currency = Currency(
-                        "RUB", "Russia Ruble", R.drawable.flag_rub
-                    ),
-                    rate = BigDecimal("79.214")
-                )
-            )
-        )
-        val result = mapper.getExchangeRates(ratesDto)
-        assertEquals(expectedResult, result)
+        val mockedRates = TestData.ratesDtoToEntity()
+        val result = mapper.getExchangeRates(mockedRates.first)
+        assertEquals(mockedRates.second, result)
     }
 
     @Test

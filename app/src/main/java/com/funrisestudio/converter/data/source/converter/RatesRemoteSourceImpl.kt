@@ -13,13 +13,13 @@ import javax.inject.Inject
 class RatesRemoteSourceImpl @Inject constructor(
     private val converterApi: ConverterApi,
     private val apiHandler: ApiHandler,
-    private val currencyMapper: RatesMapper
+    private val ratesMapper: RatesMapper
 ): RatesRemoteSource {
 
     override fun getLatestRates(baseCurrency: String): Single<ExchangeRates> {
         val request = converterApi.getCurrencyRates(baseCurrency)
         return apiHandler.handleRequestSingle(request).map {
-            currencyMapper.getExchangeRates(it)
+            ratesMapper.getExchangeRates(it)
         }
     }
 
