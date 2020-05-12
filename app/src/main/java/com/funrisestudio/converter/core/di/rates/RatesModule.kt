@@ -5,13 +5,13 @@ import com.funrisestudio.converter.core.mvi.DefaultStore
 import com.funrisestudio.converter.core.mvi.MiddleWare
 import com.funrisestudio.converter.core.mvi.Reducer
 import com.funrisestudio.converter.core.mvi.Store
-import com.funrisestudio.converter.data.repository.ConverterRepositoryImpl
-import com.funrisestudio.converter.data.source.converter.ConverterLocalSource
-import com.funrisestudio.converter.data.source.converter.ConverterRemoteSource
-import com.funrisestudio.converter.data.source.converter.ConverterLocalSourceImpl
-import com.funrisestudio.converter.data.source.converter.ConverterRemoteSourceImpl
+import com.funrisestudio.converter.data.repository.RatesRepositoryImpl
+import com.funrisestudio.converter.data.source.converter.RatesLocalSource
+import com.funrisestudio.converter.data.source.converter.RatesRemoteSource
+import com.funrisestudio.converter.data.source.converter.RatesLocalSourceImpl
+import com.funrisestudio.converter.data.source.converter.RatesRemoteSourceImpl
 import com.funrisestudio.converter.domain.interactor.RatesMiddleware
-import com.funrisestudio.converter.domain.repository.ConverterRepository
+import com.funrisestudio.converter.domain.repository.RatesRepository
 import com.funrisestudio.converter.ui.error.ConverterErrorHandler
 import com.funrisestudio.converter.ui.error.ErrorHandler
 import com.funrisestudio.converter.ui.rates.mvi.RatesAction
@@ -40,21 +40,21 @@ abstract class RatesModule {
 
     @Binds
     @RatesScope
-    abstract fun converterRepository(
-        converterRepositoryImpl: ConverterRepositoryImpl
-    ) : ConverterRepository
+    abstract fun ratesRepository(
+        ratesRepositoryImpl: RatesRepositoryImpl
+    ) : RatesRepository
 
     @Binds
     @RatesScope
-    abstract fun converterRemoteSource(
-        converterRemoteSourceImpl: ConverterRemoteSourceImpl
-    ): ConverterRemoteSource
+    abstract fun ratesRemoteSource(
+        converterRemoteSourceImpl: RatesRemoteSourceImpl
+    ): RatesRemoteSource
 
     @Binds
     @RatesScope
-    abstract fun converterLocalSource(
-        converterLocalSourceImpl: ConverterLocalSourceImpl
-    ): ConverterLocalSource
+    abstract fun ratesLocalSource(
+        converterLocalSourceImpl: RatesLocalSourceImpl
+    ): RatesLocalSource
 
     @Binds
     @RatesScope
@@ -62,14 +62,14 @@ abstract class RatesModule {
 
     @Binds
     @RatesScope
-    abstract fun converterMviStore(
+    abstract fun ratesMviStore(
         defaultStore: DefaultStore<RatesAction, RatesViewState>
     ): Store<RatesAction, RatesViewState>
 
     @Binds
-    abstract fun converterMiddleware(middleWare: RatesMiddleware): MiddleWare<RatesAction, RatesViewState>
+    abstract fun ratesMiddleware(middleWare: RatesMiddleware): MiddleWare<RatesAction, RatesViewState>
 
     @Binds
-    abstract fun converterReducer(ratesReducer: RatesReducer): Reducer<RatesAction, RatesViewState>
+    abstract fun ratesReducer(ratesReducer: RatesReducer): Reducer<RatesAction, RatesViewState>
 
 }

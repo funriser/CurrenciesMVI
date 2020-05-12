@@ -9,7 +9,7 @@ class CurrencyHolder @Inject constructor() {
 
     var currentRates: ExchangeRates? = null
 
-    fun isValid(baseCurrencyCode: String): Boolean {
+    fun isActual(baseCurrencyCode: String): Boolean {
         val rates = currentRates?:return false
         return baseCurrencyCode == rates.baseCurrency.code &&
                 rates.rates.isNotEmpty()

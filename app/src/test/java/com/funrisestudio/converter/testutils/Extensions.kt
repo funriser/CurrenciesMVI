@@ -1,4 +1,4 @@
-package com.funrisestudio.converter.utils
+package com.funrisestudio.converter.testutils
 
 import io.reactivex.Completable
 import io.reactivex.Observable

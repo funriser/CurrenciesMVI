@@ -1,4 +1,4 @@
-package com.funrisestudio.converter
+package com.funrisestudio.converter.testutils
 
 import com.funrisestudio.converter.domain.executor.Executor
 import io.reactivex.Scheduler

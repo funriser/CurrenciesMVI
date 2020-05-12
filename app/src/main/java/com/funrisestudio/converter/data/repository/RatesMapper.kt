@@ -8,7 +8,7 @@ import javax.inject.Inject
 /**
  * Maps DTOs from data sources to business entities
  */
-class ConverterMapper @Inject constructor() {
+class RatesMapper @Inject constructor() {
 
     fun getExchangeRates(ratesDto: CurrencyRatesDto): ExchangeRates {
         val baseCurrency = getCurrency(ratesDto.base)

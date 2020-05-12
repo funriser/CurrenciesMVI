@@ -6,7 +6,7 @@ import com.funrisestudio.converter.domain.entity.BaseConvertedCurrency
 import com.funrisestudio.converter.domain.entity.ConvertedCurrency
 import com.funrisestudio.converter.domain.entity.ExchangeRates
 import com.funrisestudio.converter.domain.executor.Executor
-import com.funrisestudio.converter.domain.repository.ConverterRepository
+import com.funrisestudio.converter.domain.repository.RatesRepository
 import com.funrisestudio.converter.ui.rates.mvi.RatesAction
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -26,7 +26,7 @@ import javax.inject.Inject
  */
 class GetConvertedCurrencies @Inject constructor(
     executor: Executor,
-    private val repository: ConverterRepository
+    private val repository: RatesRepository
 ) : UseCase<RatesAction, GetConvertedCurrencies.Params>(executor) {
 
     override fun buildObservable(params: Params): Observable<RatesAction> {

@@ -1,12 +1,14 @@
-package com.funrisestudio.converter
+package com.funrisestudio.converter.rates
 
+import com.funrisestudio.converter.TestData
+import com.funrisestudio.converter.testutils.TestExecutor
 import com.nhaarman.mockito_kotlin.*
 import com.funrisestudio.converter.data.exceptions.NetworkException
 import com.funrisestudio.converter.domain.entity.Currency
 import com.funrisestudio.converter.domain.interactor.GetConvertedCurrencies
-import com.funrisestudio.converter.domain.repository.ConverterRepository
+import com.funrisestudio.converter.domain.repository.RatesRepository
 import com.funrisestudio.converter.ui.rates.mvi.RatesAction
-import com.funrisestudio.converter.utils.test
+import com.funrisestudio.converter.testutils.test
 import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
@@ -16,7 +18,7 @@ class GetConverterCurrenciesTest {
     private lateinit var interactor: GetConvertedCurrencies
 
     private val executor = TestExecutor()
-    private val repository: ConverterRepository = mock()
+    private val repository: RatesRepository = mock()
 
     @Before
     fun setUp() {

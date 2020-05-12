@@ -3,15 +3,15 @@ package com.funrisestudio.converter.data.source.converter
 import com.funrisestudio.converter.domain.entity.ExchangeRates
 import io.reactivex.Single
 
-interface ConverterSource {
+interface RatesSource {
     fun getLatestRates(baseCurrency: String): Single<ExchangeRates>
 }
 
-interface ConverterLocalSource: ConverterSource {
+interface RatesLocalSource: RatesSource {
     fun saveRates(exchangeRates: ExchangeRates)
     fun hasActualData(actualBaseCurrency: String): Boolean
 }
 
-interface ConverterRemoteSource: ConverterSource {
+interface RatesRemoteSource: RatesSource {
 
 }

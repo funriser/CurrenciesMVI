@@ -8,9 +8,9 @@ import javax.inject.Inject
 /**
  * Responsible for accessing in-memory cache
  */
-class ConverterLocalSourceImpl @Inject constructor(
+class RatesLocalSourceImpl @Inject constructor(
     private val currencyHolder: CurrencyHolder
-): ConverterLocalSource {
+): RatesLocalSource {
 
     override fun getLatestRates(baseCurrency: String): Single<ExchangeRates> {
         val rates = currencyHolder.currentRates
@@ -23,7 +23,7 @@ class ConverterLocalSourceImpl @Inject constructor(
     }
 
     override fun hasActualData(actualBaseCurrency: String): Boolean {
-        return currencyHolder.isValid(actualBaseCurrency)
+        return currencyHolder.isActual(actualBaseCurrency)
     }
 
 }

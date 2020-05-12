@@ -1,4 +1,4 @@
-package com.funrisestudio.converter
+package com.funrisestudio.converter.utils
 
 import com.funrisestudio.converter.ui.DecimalFormat
 import junit.framework.Assert.assertEquals
